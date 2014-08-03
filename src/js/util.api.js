@@ -141,6 +141,23 @@ function _encodeForJSONRPCOverGET(params) {
   return encodeURIComponent(bytesToBase64(stringToBytes(JSON.stringify(params))));
 }
 
+function makeJSONRPCCall(method, params, endpoints, onSuccess, onError) {
+  var extraAJAXOpts = {
+    'contentType': 'application/json; charset=utf-8',
+    'dataType': 'json',
+    'timeout': timeout
+  }
+  
+  return fetchData(endpoints,
+     onSuccess, onError,
+     JSON.stringify({
+          "jsonrpc": "2.0",
+          "id": 0,
+          "method": method,
+          "params": params
+     }), extraAJAXOpts, true);
+}
+
 function _makeJSONAPICall(destType, endpoints, method, params, timeout, onSuccess, onError, httpMethod) {
   /*Makes a JSON RPC API call to a specific counterpartyd/counterblockd endpoint.
    
@@ -160,60 +177,11 @@ function _makeJSONAPICall(destType, endpoints, method, params, timeout, onSucces
   assert(httpMethod == "POST" || httpMethod == "GET", "Invalid HTTP method");
   
   //make JSON API call to counterblockd
-  if(httpMethod == "POST") {
-    var extraAJAXOpts = {
-      'contentType': 'application/json; charset=utf-8',
-      'dataType': 'json',
-      'timeout': timeout
-    }
-    
-    if(destType == "counterblockd") {
-      fetchData(endpoints,
-        onSuccess, onError,
-        JSON.stringify({
-          "jsonrpc": "2.0",
-          "id": 0,
-          "method": method,
-          "params": params
-        }), extraAJAXOpts, true);
-    } else if(destType == "counterpartyd") {
-      //make JSON API call to counterblockd, which will proxy it to counterpartyd
-      fetchData(endpoints,
-        onSuccess, onError,
-        JSON.stringify({
-          "jsonrpc": "2.0",
-          "id": 0,
-          "method": "proxy_to_counterpartyd",
-          "params": {"method": method, "params": params }
-        }), extraAJAXOpts, true);
-    }
-  } else { //GET
-    //The GET approach encodes the API request parameters into a URL query string on a GET request
-    //NOTE: GET query support is currently NOT IMPLEMENTED ON THE SERVER SIDE.
-    var qs = null;
-    var extraAJAXOpts = {
-      'crossDomain': true,
-      'timeout': timeout
-    }
-    
-    if(destType == "counterblockd") {
-      qs = $.param({
-        "jsonrpc": "2.0",
-        "id": 0,
-        "method": method,
-        "params": _encodeForJSONRPCOverGET(params)
-      });
-      fetchData(_formulateEndpoints(endpoints, qs), onSuccess, onError, null, extraAJAXOpts, true);
-    } else if(destType == "counterpartyd") {
-      //make JSON API call to counterblockd, which will proxy it to counterpartyd
-      qs = $.param({
-        "jsonrpc": "2.0",
-        "id": 0,
-        "method": "proxy_to_counterpartyd",
-        "params": _encodeForJSONRPCOverGET({"method": method, "params": params })
-      });
-      fetchData(_formulateEndpoints(endpoints, qs), onSuccess, onError, null, extraAJAXOpts, true);
-    }
+  if(destType == "counterblockd") {
+    makeJSONRPCCall(method, params, endpoints, onSuccess, onError);
+  } else if(destType == "counterpartyd") {
+    //make JSON API call to counterblockd, which will proxy it to counterpartyd
+    makeJSONRPCCall("proxy_to_counterpartyd", {"method": method, "params": params }, endpoints, onSuccess, onError);
   }
 }
 
@@ -228,7 +196,7 @@ function _getDestTypeFromMethod(method) {
       'get_owned_assets', 'get_asset_history', 'get_asset_extended_info', 'get_transaction_stats', 'get_wallet_stats', 'get_asset_pair_market_info',
       'get_market_price_summary', 'get_market_price_history', 'get_market_info', 'get_market_info_leaderboard', 'get_market_cap_history',
       'get_order_book_simple', 'get_order_book_buysell', 'get_trade_history',
-      'record_btc_open_order', 'cancel_btc_open_order', 'get_bets', 'get_user_bets', 'get_feed', 'get_feeds_by_source',
+      'get_bets', 'get_user_bets', 'get_feed', 'get_feeds_by_source',
       'parse_base64_feed', 'get_open_rps_count', 'get_user_rps', 
       'get_users_pairs', 'get_market_orders', 'get_market_trades', 'get_markets_list', 'get_market_details',
       'get_pubkey_for_address', 'create_armory_utx', 'convert_armory_signedtx_to_raw_hex', 'create_support_case'].indexOf(method) >= 0) {

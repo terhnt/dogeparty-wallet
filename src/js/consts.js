@@ -53,7 +53,7 @@ var DEFAULT_PREFERENCES = {
   'selected_lang': 'en-us',
   'watch_only_addresses': [],
   'armory_offline_addresses': [],
-  'auto_btcpay': true, //default to auto BTC payments being enabled
+  'btcpay_method': 'autoescrow', //valid values are 'autoescrow', 'auto', and 'manual'
   'has_accepted_license': false
 };
 
@@ -210,8 +210,9 @@ var ORIG_REFERER = document.referrer;
 
 //CONSTANTS THAT DEPEND ON IS_DEV / USE_TESTNET
 var BLOCKEXPLORER_URL = USE_TESTNET ? "http://test.bitcore.io" : "http://live.bitcore.io";
-var GOOGLE_ANALYTICS_UAID = null; //will be set in counterwallet.js
-var ROLLBAR_ACCESS_TOKEN = null; //will be set in counterwallet.js
+var GOOGLE_ANALYTICS_UAID = null; //will be set in counterwallet.js via servers.json
+var ROLLBAR_ACCESS_TOKEN = null; //will be set in counterwallet.js via servers.json
+var AUTOBTCESCROW_SERVER = null; //will be set in counterwallet.js via servers.json
 
 var TRANSACTION_DELAY = 5000 // delay between transaction to avoid error -22 (vin reused)
 var TRANSACTION_MAX_RETRY = 5 // max retry when transaction failed (don't include first transaction, so 3 retry means 4 queries)
@@ -227,13 +228,7 @@ var DISABLED_FEATURES_SUPPORTED = ['betting', 'rps', 'dividend', 'exchange', 'le
 var DISABLED_FEATURES = []; //set in counterwallet.js
 
 // restricted action
-var RESTRICTED_AREA = {
-  'pages/betting.html': ['US'],
-  'pages/openbets.html': ['US'],
-  'pages/matchedbets.html': ['US'],
-  'pages/rps.html': ['US'],
-  'dividend': ['US']
-}
+var RESTRICTED_AREA = null; //will be set in counterwallet.js via servers.json
 
 var MAX_SUPPORT_CASE_PROBLEM_LEN = 4096;
 

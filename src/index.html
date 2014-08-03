@@ -488,6 +488,13 @@
 
 
               <section data-bind="visible: showAdvancedOptions"><div class="row">
+                <label class="control-label col col-sm-2">BTCPay Method</label>
+                <div class="col col-sm-10">
+                    <select id="btcPayMethod" class="width-max" data-bind="options: availableBTCPayMethods, optionsValue: 'id', optionsText: 'name', value: btcPayMethod, select2: {  minimumResultsForSearch: -1, escapeMarkup: 'direct' }"></select>
+                </div>
+              </div></section>
+                  
+                  
                 <div class="col col-sm-2">Auto BTCPay</div>
                 <div class="col col-sm-10">
                   <label class="checkbox">

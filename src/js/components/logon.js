@@ -182,7 +182,12 @@ function LogonViewModel() {
           }
         }
       }
-
+      
+      //Update/upgrade any specific pref settings
+      if(!AUTOBTCESCROW_SERVER && PREFERENCES['btcpay_method'] == 'autoescrow') {
+        PREFERENCES['btcpay_method'] = 'auto'; //no auto BTC services enabled
+        mustSavePreferencesToServer = true;
+      }
     } else { //could not find user stored preferences
       //No server had the preferences
       $.jqlog.log("Stored preferences NOT found on server(s). Creating new...");

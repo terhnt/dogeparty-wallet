@@ -285,12 +285,6 @@ function ExchangeViewModel() {
       var message = "Your order to sell <b class='notoQuantityColor'>" + self.sellAmount() + "</b>"
        + " <b class='notoAssetColor'>" + self.baseAsset() + "</b> " + (armoryUTx ? "will be placed" : "has been placed") + ". "; 
       WALLET.showTransactionCompleteDialog(message + ACTION_PENDING_NOTICE, message, armoryUTx);
-       
-      //if the order involes selling BTC, then we want to notify the servers of our wallet_id so folks can see if our
-      // wallet is "online", in order to determine if we'd be able to best make the necessary BTCpay
-      if(self.baseAsset() == 'BTC' && addressType !== 'armory') {
-        multiAPI("record_btc_open_order", {'wallet_id': WALLET.identifier(), 'order_tx_hash': txHash});
-      }
     }
 
     WALLET.doTransaction(self.selectedAddressForSell(), "create_order", params, onSuccess);
@@ -508,12 +502,6 @@ function ExchangeViewModel() {
       var message = "Your order to buy <b class='notoQuantityColor'>" + self.buyAmount() + "</b>"
        + " <b class='notoAssetColor'>" + self.baseAsset() + "</b> " + (armoryUTx ? "will be placed" : "has been placed") + ". "; 
       WALLET.showTransactionCompleteDialog(message + ACTION_PENDING_NOTICE, message, armoryUTx);
-      
-      //if the order involes selling BTC, then we want to notify the servers of our wallet_id so folks can see if our
-      // wallet is "online", in order to determine if we'd be able to best make the necessary BTCpay
-      if(self.quoteAsset() == 'BTC' && addressType !== 'armory') {
-        multiAPI("record_btc_open_order", {'wallet_id': WALLET.identifier(), 'order_tx_hash': txHash});
-      }
     }
 
     WALLET.doTransaction(self.selectedAddressForBuy(), "create_order", params, onSuccess);

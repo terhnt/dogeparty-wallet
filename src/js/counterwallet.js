@@ -99,6 +99,10 @@ function loadServersListAndSettings() {
     ROLLBAR_ACCESS_TOKEN = data['rollbarAccessToken'] || ''; 
     GOOGLE_ANALYTICS_UAID = (!USE_TESTNET ? data['googleAnalyticsUA'] : data['googleAnalyticsUA-testnet']) || '';
     
+    AUTOBTCESCROW_SERVER = ('https://' + data['autoBTCEscrowServer'] + (!USE_TESTNET ? '/_api/' : '/_t_api/')) || '';
+    
+    RESTRICTED_AREA = data['restrictedAreas'] || {};
+    
     if(!data['servers'].length)
       cwURLs([ location.origin ]);
     else

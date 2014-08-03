@@ -13,9 +13,16 @@ function WalletOptionsModalViewModel() {
     {'id': 'en-us', 'name': 'English'}
     //additional languages in the future
   ]);
+  self.availableBTCPayMethods = ko.observableArray([
+    {'id': 'auto',   'name': 'Automatic'},
+    {'id': 'manual', 'name': 'Manual'}
+  ]);
+  if(AUTOBTCESCROW_SERVER) {
+    self.availableBTCPayMethods.unshift({'id': 'autoescrow',   'name': 'Automatic with Escrow'});
+  }
   
   //set these properties to null as PREFERENCES is not available until login happens (they will be formally set on login)
-  self.autoBTCPayEnabled = ko.observable(null);
+  self.btcPayMethod = ko.observable(null);
   self.selectedTheme = ko.observable(null);
   self.selectedLang = ko.observable(null);
   self.ORIG_PREFERENCES_JSON = null;
@@ -52,9 +59,10 @@ function WalletOptionsModalViewModel() {
     return cwURLs() ? cwURLs().join(', ') : 'UNKNOWN';
   }, self);
 
-  self.autoBTCPayEnabled.subscribeChanged(function(newVal, prevVal) {
-    assert(newVal === true || newVal === false);
-    PREFERENCES['auto_btcpay'] = newVal;
+  self.btcPayMethod.subscribeChanged(function(newSelection, prevSelection) {
+    assert(newVal === 'autoescrow' || newVal === 'auto' || newVal == 'manual');
+    $.jqlog.debug("Changing btcpay_method from " + prevSelection['name'] + " to " + newSelection['name']);
+    PREFERENCES['btcpay_method'] = newSelection['id'];
   });
   
   self.selectedTheme.subscribeChanged(function(newSelection, prevSelection) {
@@ -89,12 +97,13 @@ function WalletOptionsModalViewModel() {
     self.ORIG_PREFERENCES_JSON = JSON.stringify(PREFERENCES); //store to be able to tell if we need to update prefs on the server
 
     //display current settings into the options UI
-    self.autoBTCPayEnabled(PREFERENCES['auto_btcpay']);
+    self.btcPayMethod(PREFERENCES['btcpay_method']);
     self.selectedTheme(PREFERENCES['selected_theme']);
     self.selectedLang(PREFERENCES['selected_lang']);
     
     //ghetto ass hack -- select2 will not set itself properly when using the 'optionsValue' option, but it will
     // not fire off events when NOT using this option. wtf... o_O
+    $('#btcPayMethod').select2("val", self.btcPayMethod());
     $('#themeSelector').select2("val", self.selectedTheme());
     $('#langSelector').select2("val", self.selectedLang());
 
