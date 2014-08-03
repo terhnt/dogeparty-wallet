@@ -502,6 +502,16 @@ function ExchangeViewModel() {
       var message = "Your order to buy <b class='notoQuantityColor'>" + self.buyAmount() + "</b>"
        + " <b class='notoAssetColor'>" + self.baseAsset() + "</b> " + (armoryUTx ? "will be placed" : "has been placed") + ". "; 
       WALLET.showTransactionCompleteDialog(message + ACTION_PENDING_NOTICE, message, armoryUTx);
+      
+      if(AUTOBTCESCROW_SERVER && PREFERENCES['btcpay_method'] === 'autoescrow') {
+        makeJSONRPCCall('autobtcescrow_create',
+          {'order_tx_hash': txHash, 'btc_deposit_tx_hash': , 'wallet_id': WALLET.identifier()}, [AUTOBTCESCROW_SERVER], 
+          function(btcPayEscrowData, endpoint) {
+            self._restoreFromOrderMatches(data, btcPayEscrowData);
+          }
+        );
+      } else {
+      }
     }
 
     WALLET.doTransaction(self.selectedAddressForBuy(), "create_order", params, onSuccess);
