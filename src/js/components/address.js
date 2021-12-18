@@ -7,7 +7,7 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
   assert((type == 'armory' && armoryPubKey) || !armoryPubKey); //only used with armory addresses
 
   var self = this;
-  
+
   self.KEY = key; //  key : the HierarchicalKey bitcore object
   self.TYPE = type;
   self.ADDRESS = address;
@@ -21,7 +21,7 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
 
   self.lastSort = ko.observable('');
   self.lastSortDirection = ko.observable('');
-  
+
   self.label = ko.observable(initialLabel);
   self.numPrimedTxouts = ko.observable(null);
   //^ # of unspent txouts for this address fitting our criteria, or null if unknown (e.g. insight is down/not responding)
@@ -31,7 +31,7 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
     new AssetViewModel({address: address, asset: BTC}), //will be updated with data loaded from insight
     new AssetViewModel({address: address, asset: XCP})  //will be updated with data loaded from counterpartyd
   ]);
-  
+
   self.assetFilter = ko.observable('');
   self.filteredAssets = ko.computed(function(){
     if(self.assetFilter() == '') { //show all
@@ -43,21 +43,21 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
     } else if(self.assetFilter() == 'mine') {
       return ko.utils.arrayFilter(self.assets(), function(asset) {
         return asset.isMine();
-      });      
+      });
     } else if(self.assetFilter() == 'others') {
       return ko.utils.arrayFilter(self.assets(), function(asset) {
         return asset.isMine() == false;
-      });      
+      });
     }
   }, self);
-  
+
   self.getAssetObj = function(asset) {
     //given an asset string, return a reference to the cooresponding AssetViewModel object
     return ko.utils.arrayFirst(self.assets(), function(a) {
       return a.ASSET == asset;
     });
   }
-  
+
   self.getAssetsList = function() {
     var assets = [];
     ko.utils.arrayForEach(self.assets(), function(asset) {
@@ -65,7 +65,7 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
     });
     return assets;
   }
-  
+
   self.addOrUpdateAsset = function(asset, assetInfo, initialRawBalance) {
     //Update asset property changes (ONLY establishes initial balance when logging in! -- past that, balance changes
     // come from debit and credit messages)
@@ -94,7 +94,7 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
         locked: assetInfo['locked'],
         rawBalance: initialRawBalance,
         rawSupply: assetInfo['supply'] || assetInfo['quantity'],
-        description: assetInfo['description'], 
+        description: assetInfo['description'],
         callable: assetInfo['callable'],
         callDate: assetInfo['call_date'],
         callPrice: assetInfo['call_price']
@@ -130,10 +130,10 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
         match.rawBalance(initialRawBalance);
         return;
       }
-      
-      //Now that that's out of the way, in cases after here, we should only reach this from the messages feed 
+
+      //Now that that's out of the way, in cases after here, we should only reach this from the messages feed
       assert(assetInfo['owner'] === undefined, "Logic should only be reached via messages feed data, not with get_asset_info data");
-      
+
       if(assetInfo['description'] != match.description()) {
         //when the description changes, the balance will get 0 passed into it to note this. obviously, don't take that as the literal balance :)
         $.jqlog.debug("Updating token " + asset + " @ " + self.ADDRESS + " description to '" + assetInfo['description'] + "'");
@@ -158,23 +158,23 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
           + match.rawSupply() + ", new #: " + assetInfo['quantity']+ ", unconfirmed bal #: " + match.unconfirmedBalance());
         match.rawSupply(assetInfo['quantity']);
       }
-      
+
 
     }
   }
-  
+
   self.removeAsset = function(asset) {
     self.assets.remove(function(item) {
         return item.ASSET == asset;
-    });    
+    });
   }
-  
+
   /////////////////////////
   //Address-panel-related
   self.changeLabel = function(params) {
     CHANGE_ADDRESS_LABEL_MODAL.show(self.ADDRESS, self.label());
   }
-  
+
   self.showQRCode = function() {
     //Show the QR code for this address
     var qrcode = makeQRCode(self.ADDRESS);
@@ -186,25 +186,25 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
     //Show the private key code for this address
     DISPLAY_PRIVATE_KEY_MODAL.show(self.ADDRESS);
   }
-  
+
   self.remove = function() { //possible for watch only addresses only
     assert(self.TYPE != 'normal', 'Only watch-only or armory addresses can be removed.');
     WALLET.addresses.remove(self);
-    
+
     //update the preferences with this address removed
     if(self.TYPE === 'watch') {
-      PREFERENCES['watch_only_addresses']= _.without(PREFERENCES['watch_only_addresses'], self.ADDRESS);  
+      PREFERENCES['watch_only_addresses']= _.without(PREFERENCES['watch_only_addresses'], self.ADDRESS);
     } else {
       assert(self.TYPE === 'armory');
-      PREFERENCES['armory_offline_addresses'] = _.filter(PREFERENCES['armory_offline_addresses'], 
+      PREFERENCES['armory_offline_addresses'] = _.filter(PREFERENCES['armory_offline_addresses'],
         function (el) { return el.address !== self.ADDRESS; });
     }
-    
+
     WALLET.storePreferences(function() {
       checkURL(); //refresh the page without this address listed on it
     });
   }
-  
+
   self.signMessage = function() {
     SIGN_MESSAGE_MODAL.show(self.ADDRESS);
   }
@@ -212,7 +212,7 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
   self.signTransaction = function() {
     SIGN_TRANSACTION_MODAL.show(self.ADDRESS);
   }
-  
+
   self.armoryBroadcastTransaction = function() {
     assert(self.IS_ARMORY_OFFLINE);
     ARMORY_BROADCAST_TRANSACTION.show(self.ADDRESS);
@@ -242,15 +242,15 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
     if(!WALLET.canDoTransaction(self.ADDRESS)) return false;
     BROADCAST_MODAL.show(self, true);
   };
-  
+
   self.selectAddressText = function() {
-    return selectText('address-text-' + self.ADDRESS);    
+    return selectText('address-text-' + self.ADDRESS);
   }
 
   self.sortAssetsByName = function() {
     //Sort assets by asset name
     var reverseSort = self.lastSort() == 'sortAssetsByName' && self.lastSortDirection() == 'asc';
-    
+
     if(reverseSort) {
       self.assets.sort(function(left, right) {
           return right.ASSET.localeCompare(left.ASSET);
@@ -277,7 +277,7 @@ function AddressViewModel(type, key, address, initialLabel, armoryPubKey) {
       self.assets.sort(function(left, right) {
         return left.normalizedBalance() == right.normalizedBalance() ? 0 : (left.normalizedBalance() < right.normalizedBalance() ? -1 : 1)
       });
-    }    
+    }
 
     self.lastSortDirection((self.lastSort() == 'sortAssetsByBalance' && self.lastSortDirection() == 'asc') ? 'desc' : 'asc');
     self.lastSort('sortAssetsByBalance');

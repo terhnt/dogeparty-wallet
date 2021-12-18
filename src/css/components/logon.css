@@ -1,9 +1,9 @@
-/* 
+/*
  * Logon page specific
  */
 #logon {
   padding-top: 120px;
-  background: white; 
+  background: white;
   width:      100%;
   height:     100%;
   overflow: auto;
@@ -41,7 +41,7 @@
   background-color:#EEE;
   border:1px solid #CCC;
   margin-top: 80px;
-  padding-top: 20px;  
+  padding-top: 20px;
 }
 
 #newWalletButton {
@@ -89,7 +89,7 @@ p.logonWarningOtherLines {
 
 /* disable animations for the login progress bar
  * ..if we don't do this, the login progress bar won't work correctly, due to the animations taking
- * time and no correctly playing 
+ * time and no correctly playing
  */
 #loginProgressBar {
     -webkit-transition: none;
@@ -99,31 +99,31 @@ p.logonWarningOtherLines {
     transition: none;
 }
 
-.dogeparty {
+.unoparty {
   background: #42b5d5 !important;
   color: white;
   font-family: "Open Sans", Arial, Helvetica, Sans-Serif;
 }
 
-.dogeparty h1 {
+.unoparty h1 {
   font-size: 36px;
   font-weight: bold;
 }
 
-.dogeparty h2 {
+.unoparty h2 {
   font-size: 20px;
 }
 
-.dogeparty h1,
-.dogeparty h2 {
+.unoparty h1,
+.unoparty h2 {
   text-align: center;
 }
 
-.dogeparty .form-well {
+.unoparty .form-well {
   max-width: 440px !important;
 }
 
-.dogeparty .btn-lg {
+.unoparty .btn-lg {
   background: #42b5d5;
   border: 1px solid white;
   border-radius: 4px;
@@ -135,23 +135,23 @@ p.logonWarningOtherLines {
   padding: 30px 50px;
 }
 
-.dogeparty #createNewAcctBtnPane {
+.unoparty #createNewAcctBtnPane {
   margin-bottom: 0;
 }
 
-.dogeparty .btn-lg:hover,
-.dogeparty .btn-lg:focus {
+.unoparty .btn-lg:hover,
+.unoparty .btn-lg:focus {
   left: 0;
 }
 
-.dp-logo {
+.un-logo {
   display: block;
   margin: 0 auto 70px;
   height: 196px;
   width: 196px;
 }
 
-.dogeparty .testnet-note {
+.unoparty .testnet-note {
   font-size: 18px;
   line-height: 2em;
   margin: 60px 0 0;
@@ -165,13 +165,13 @@ p.logonWarningOtherLines {
   text-decoration: none;
 }
 
-.dogeparty .panel-heading {
+.unoparty .panel-heading {
   background: transparent;
   border: 0;
   padding: 0;
 }
 
-.dogeparty .panel-headline {
+.unoparty .panel-headline {
   color: white;
   display: block;
   font-size: 18px;
@@ -179,14 +179,14 @@ p.logonWarningOtherLines {
   text-align: center;
 }
 
-.dogeparty .panel-info,
-.dogeparty .panel-warning {
+.unoparty .panel-info,
+.unoparty .panel-warning {
   background: transparent;
   border: 0;
   margin-top: 60px;
 }
 
-.dogeparty .panel-body {
+.unoparty .panel-body {
   background: #40aecd;
   border: 1px solid #38a0bd;
   border-radius: 12px;
@@ -197,7 +197,7 @@ p.logonWarningOtherLines {
   height: auto;
 }
 
-.dogeparty input[type="password"],
+.unoparty input[type="password"],
 #generated {
   background: #f6f6f6;
   border: 0;
@@ -211,8 +211,8 @@ p.logonWarningOtherLines {
   color: black;
 }
 
-.dogeparty .btn-open,
-.dogeparty .btn-regenerate {
+.unoparty .btn-open,
+.unoparty .btn-regenerate {
   background: #2f99b6 !important;
   border: 0;
   box-shadow: none !important;
@@ -221,15 +221,15 @@ p.logonWarningOtherLines {
   padding: 15px;
 }
 
-.dogeparty .btn-regenerate {
+.unoparty .btn-regenerate {
   width: 100%;
 }
 
-.dogeparty .btn-primary-2 {
+.unoparty .btn-primary-2 {
   color: white;
 }
 
-.dogeparty .alert-danger p {
+.unoparty .alert-danger p {
   font-size: 14px;
   text-align: left;
 }
@@ -240,28 +240,28 @@ p.logonWarningOtherLines {
   margin-top: 80px;
 }
 
-.dogeparty .extra-info {
+.unoparty .extra-info {
   background: transparent !important;
   border: 0 !important;
   padding: 40px 0 !important;
 }
 
-.dogeparty .img-secure {
+.unoparty .img-secure {
   height: 138px;
   width: 84px;
 }
 
-.dogeparty .img-globe {
+.unoparty .img-globe {
   height: 118px;
   width: 100px;
 }
 
-.dogeparty .img-hand {
+.unoparty .img-hand {
   height: 135px;
   width: 86px;
 }
 
-.dogeparty .img-rocket {
+.unoparty .img-rocket {
   display: block;
   height: 155px;
   margin: 0 auto 60px;
@@ -287,12 +287,12 @@ p.logonWarningOtherLines {
   top: 50px;
 }
 
-.dogeparty .sales-title {
+.unoparty .sales-title {
   font-size: 17px;
   font-weight: bold;
 }
 
-.dogeparty .down-arrow-row {
+.unoparty .down-arrow-row {
   height: 0;
   margin-bottom: 0 !important;
   margin-top: 0 !important;
@@ -300,7 +300,7 @@ p.logonWarningOtherLines {
   top: -65px;
 }
 
-.dogeparty .down-arrow-circle {
+.unoparty .down-arrow-circle {
   background: #42b5d5;
   border-radius: 50%;
   height: 50px;
@@ -309,7 +309,7 @@ p.logonWarningOtherLines {
   width: 50px;
 }
 
-.dogeparty .down-arrow {
+.unoparty .down-arrow {
   height: 26px;
   position: relative;
   top: 12px;
@@ -332,4 +332,3 @@ p.logonWarningOtherLines {
   }
 
 }
-

@@ -57,7 +57,7 @@ var disabledFeatures = ko.observableArray([]);
 function produceCWServerList() {
   cwURLs(_.shuffle(cwURLs())); //randomly shuffle the list to decide the server try order...
   $.jqlog.debug("MultiAPI Backends: " + JSON.stringify(cwURLs()));
-  
+
   cwBaseURLs(jQuery.map(cwURLs(), function(element) {
     return element;
   }));
@@ -69,16 +69,16 @@ function produceCWServerList() {
 function initGoogleAnalytics() {
   $.jqlog.debug("Initializing Google Analytics for UA: " + GOOGLE_ANALYTICS_UAID);
   if(!GOOGLE_ANALYTICS_UAID) return;
-  
-  window._gaq=[["_setAccount", GOOGLE_ANALYTICS_UAID], ["_trackPageview"]]; 
+
+  window._gaq=[["_setAccount", GOOGLE_ANALYTICS_UAID], ["_trackPageview"]];
   (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
   g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
-  s.parentNode.insertBefore(g,s)}(document,"script"));  
+  s.parentNode.insertBefore(g,s)}(document,"script"));
 }
 
 function initRollbar() {
   /* TODO: Try to load rollbar earlier, possibly... (However, as we get the accessToken from servers.json, we'd have
-   * to put all of that logic in <head> for instance to be able to do that. So this should hopefully work fine.) 
+   * to put all of that logic in <head> for instance to be able to do that. So this should hopefully work fine.)
    */
   if(!ROLLBAR_ACCESS_TOKEN) return;
   var _rollbarConfig = {
@@ -96,9 +96,9 @@ function loadServersListAndSettings() {
   $.getJSON("/servers.json", function(data) {
     assert(data && typeof data == "object" && data.hasOwnProperty("servers"), "Returned servers.json file does not contain valid JSON object");
     assert(data['servers'] && data['servers'] instanceof Array, "'servers' field in returned servers.json file is not an array");
-    ROLLBAR_ACCESS_TOKEN = data['rollbarAccessToken'] || ''; 
+    ROLLBAR_ACCESS_TOKEN = data['rollbarAccessToken'] || '';
     GOOGLE_ANALYTICS_UAID = (!USE_TESTNET ? data['googleAnalyticsUA'] : data['googleAnalyticsUA-testnet']) || '';
-    
+
     if(!data['servers'].length)
       cwURLs([ location.origin ]);
     else
@@ -106,7 +106,7 @@ function loadServersListAndSettings() {
     produceCWServerList();
     initGoogleAnalytics();
     initRollbar();
-    
+
     //Init list of disabled features
     if(data['disabledFeatures']) {
       assert(data['disabledFeatures'] instanceof Array, "'disabledFeatures' field in returned servers.json file is not an array");
@@ -145,11 +145,11 @@ function autoDropUpDropdowns() {
   (function() {
     // require menu height + margin, otherwise convert to drop-up
     var dropUpMarginBottom = 100;
-  
+
     function dropUp() {
       var windowHeight = $(window).height();
       $(".btn-group-dropup").each(function() {
-        var dropDownMenuHeight, 
+        var dropDownMenuHeight,
             rect = this.getBoundingClientRect();
         // only toggle menu's that are visible on the current page
         if (rect.top > windowHeight) {
@@ -163,13 +163,13 @@ function autoDropUpDropdowns() {
         $(this).toggleClass("dropup", ((windowHeight - rect.bottom) < (dropDownMenuHeight + dropUpMarginBottom)) && (rect.top > dropDownMenuHeight));
       });
     };
-  
+
     // bind to load & scroll - but debounce scroll with `underscorejs`
     $(window).bind({
       "resize scroll touchstart touchmove mousewheel": _.debounce(dropUp, 100),
       "load": dropUp
     });
-  }).call(this);  
+  }).call(this);
 }
 
 
@@ -179,13 +179,13 @@ function autoDropUpDropdowns() {
 $(document).ready(function() {
   //Reject browsers that don't support the features we need (especially CSP 1.0 and window.crypto)
   // See http://caniuse.com/contentsecuritypolicy and https://developer.mozilla.org/en-US/docs/Web/API/window.crypto.getRandomValues
-  $.reject({  
+  $.reject({
     reject: {
       msie1: true,
       msie2: true,
       msie3: true,
       msie4: true,
-      msie5: true, 
+      msie5: true,
       msie6: true, //kill it with fire
       msie7: true, //kill it with fire
       msie8: true, //kill it with fire
@@ -278,17 +278,17 @@ $(document).ready(function() {
       opera: {
         text: 'Opera',
         url: 'http://www.opera.com/download/'
-      }      
+      }
     },
-    header: 'Your browser is not supported with Dogeparty Wallet',
-    paragraph1: "Dogeparty Wallet's security features require a newer browser than what you are using. We recommend Chrome for the best user experience."
+    header: 'Your browser is not supported with Unoparty Wallet',
+    paragraph1: "Unoparty Wallet's security features require a newer browser than what you are using. We recommend Chrome for the best user experience."
       + " Also, note that Microsoft Internet Explorer is not supported due to it's lack of full support for Content-Security-Policy restrictions.",
     close: false,
     closeESC: false
   });
-  
+
   autoDropUpDropdowns();
-  
+
   loadServersListAndSettings();
 
   window.onbeforeunload = warningOnExit;

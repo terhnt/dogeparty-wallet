@@ -21,11 +21,11 @@
 * */
 function BTCPayFeedViewModel() {
   var self = this;
-  
+
   self.dispCount = ko.computed(function() {
     return WAITING_BTCPAY_FEED.entries().length + UPCOMING_BTCPAY_FEED.entries().length;
   }, self);
-  
+
   self.dispLastUpdated = ko.computed(function() {
     return WAITING_BTCPAY_FEED.lastUpdated() >= UPCOMING_BTCPAY_FEED.lastUpdated() ? WAITING_BTCPAY_FEED.lastUpdated() : UPCOMING_BTCPAY_FEED.lastUpdated();
   }, self);
@@ -38,26 +38,26 @@ function WaitingBTCPayViewModel(btcPayData) {
   self.BTCPAY_DATA = btcPayData;
   self.now = ko.observable(new Date()); //auto updates from the parent model every minute
   self.MATCH_EXPIRE_INDEX = self.BTCPAY_DATA['matchExpireIndex'];
-  
+
   self.dispBTCQuantity = smartFormat(self.BTCPAY_DATA['btcQuantity']);
   self.dispMyAddr = getAddressLabel(self.BTCPAY_DATA['myAddr']);
   self.dispMyOrderTxHash = getTxHashLink(self.BTCPAY_DATA['myOrderTxHash']);
-  
+
   self.expiresInNumBlocks = ko.computed(function() {
     return self.BTCPAY_DATA['matchExpireIndex'] - WALLET.networkBlockHeight();
   }, self);
-  
+
   self.approxExpiresInTime = ko.computed(function() {
     return self.now().getTime() + (self.expiresInNumBlocks() * APPROX_SECONDS_PER_BLOCK * 1000);
   }, self);
-  
+
   self.displayColor = ko.computed(function() {
     if(self.approxExpiresInTime() - self.now() > 7200 * 1000) return 'bg-color-greenLight'; //> 2 hours
     if(self.approxExpiresInTime() - self.now() > 3600 * 1000) return 'bg-color-yellow'; //> 1 hour
     if(self.approxExpiresInTime() - self.now() > 1800 * 1000) return 'bg-color-orange'; //> 30 min
     return 'bg-color-red'; // < 30 min, or already expired according to our reough estimate
   }, self);
-  
+
   self.completeBTCPay = function() {
     //check duplicate
     if (PROCESSED_BTCPAY[btcPayData['orderMatchID']]) {
@@ -78,7 +78,7 @@ function WaitingBTCPayViewModel(btcPayData) {
           + " <b class='notoAddrColor'>" + getAddressLabel(self.BTCPAY_DATA['myAddr']) + "</b> and try again.");
         return;
       }
-      
+
       bootbox.dialog({
         message: "Confirm a payment of <b class='notoQuantityColor'>" + self.BTCPAY_DATA['btcQuantity'] + "</b>"
           + " <b class='notoAssetColor'>BTC</b>" + " to address"
@@ -110,7 +110,7 @@ function WaitingBTCPayViewModel(btcPayData) {
           }
         }
       });
-    });    
+    });
   }
 }
 
@@ -118,7 +118,7 @@ function WaitingBTCPayFeedViewModel() {
   var self = this;
   self.entries = ko.observableArray([]);
   self.lastUpdated = ko.observable(new Date());
-  
+
   self.entries.subscribe(function() {
     WALLET.isSellingBTC(self.entries().length + UPCOMING_BTCPAY_FEED.entries().length ? true : false);
   });
@@ -128,19 +128,19 @@ function WaitingBTCPayFeedViewModel() {
     var now = new Date();
     for(var i=0; i < self.entries().length; i++) {
       self.entries()[i].now(now);
-    }  
-  }, 60 * 1000); 
+    }
+  }, 60 * 1000);
 
   self.add = function(btcPayData, resort) {
     assert(btcPayData && btcPayData['orderMatchID']);
     //^ must be a BTCPayData structure, not a plain message from the feed or result from the API
-    
+
     if(typeof(resort)==='undefined') resort = true;
     self.entries.unshift(new WaitingBTCPayViewModel(btcPayData));
     if(resort) self.sort();
     self.lastUpdated(new Date());
   }
-  
+
   self.remove = function(orderHashOrMatchHash, data) {
     //data is supplied optionally to allow us to notify the user on a failed BTCpay...it's only used when called from messagesfeed.js
     // before we work with valid messages only
@@ -156,12 +156,12 @@ function WaitingBTCPayFeedViewModel() {
       self.lastUpdated(new Date());
     }
   }
-  
+
   self.sort = function() {
     //sort the pending BTCpays so that the entry most close to expiring is at top
     self.entries.sort(function(left, right) {
       return left.expiresInNumBlocks() == right.expiresInNumBlocks() ? 0 : (left.expiresInNumBlocks() < right.expiresInNumBlocks() ? -1 : 1);
-    });      
+    });
   }
 
   self.restore = function() {
@@ -179,14 +179,14 @@ function WaitingBTCPayFeedViewModel() {
       function(data, endpoint) {
         $.jqlog.debug("Order matches: " + JSON.stringify(data));
         for(var i=0; i < data.length; i++) {
-          //if the other party is the one that should be paying BTC for this specific order match, then skip it          
+          //if the other party is the one that should be paying BTC for this specific order match, then skip it
           if(   WALLET.getAddressObj(data['tx0_address']) && data['forward_asset'] == BTC
              || WALLET.getAddressObj(data['tx1_address']) && data['backward_asset'] == BTC)
              continue;
-          
-          //if here, we have a pending order match that we owe BTC for. 
+
+          //if here, we have a pending order match that we owe BTC for.
           var orderMatchID = data[i]['tx0_hash'] + data[i]['tx1_hash'];
-          
+
           //next step is that we need to check if it's one we have paid, but just hasn't been confirmed yet. check
           // the pendingactions feed to see if the BTCpay is pending
           var pendingBTCPay = $.grep(PENDING_ACTION_FEED.entries(), function(e) {
@@ -196,7 +196,7 @@ function WaitingBTCPayFeedViewModel() {
             $.jqlog.debug("pendingBTCPay:restore:not showing btcpay request for order match ID: " + orderMatchID);
           } else {
             //not paid yet (confirmed), nor is it a pending action
-            var btcPayData = WaitingBTCPayFeedViewModel.makeBTCPayData(data[i]);            
+            var btcPayData = WaitingBTCPayFeedViewModel.makeBTCPayData(data[i]);
             if (btcPayData) {
               if(WALLET.networkBlockHeight() - btcPayData['blockIndex'] < NUM_BLOCKS_TO_WAIT_FOR_BTCPAY) {
                 //If the order match is younger than NUM_BLOCKS_TO_WAIT_FOR_BTCPAY blocks, then it's actually still an
@@ -209,7 +209,7 @@ function WaitingBTCPayFeedViewModel() {
             }
           }
         }
-          
+
         //Sort upcoming btcpay and waiting btcpay lists
         UPCOMING_BTCPAY_FEED.sort();
         WAITING_BTCPAY_FEED.sort();
@@ -221,7 +221,7 @@ WaitingBTCPayFeedViewModel.makeBTCPayData = function(data) {
   //data is a pending order match object (from a data feed message received, or from a get_orders API result)
   var firstInPair = (WALLET.getAddressObj(data['tx0_address']) && data['forward_asset'] == BTC) ? true : false;
   if(!firstInPair) if (!(WALLET.getAddressObj(data['tx1_address']) && data['backward_asset'] == BTC)) return false;
-  
+
   return {
     blockIndex: data['tx1_block_index'], //the latter block index, which is when the match was actually made
     matchExpireIndex: data['match_expire_index'],
@@ -246,21 +246,21 @@ function UpcomingBTCPayViewModel(btcPayData) {
   var self = this;
   self.BTCPAY_DATA = btcPayData;
   self.now = ko.observable(new Date()); //auto updates from the parent model every minute
-  
+
   self.dispBTCQuantity = smartFormat(self.BTCPAY_DATA['btcQuantity']);
   self.dispMyOrderTxHash = getTxHashLink(self.BTCPAY_DATA['myOrderTxHash']);
-  
+
   self.numBlocksUntilEligible = ko.computed(function() {
     return Math.max(NUM_BLOCKS_TO_WAIT_FOR_BTCPAY - (WALLET.networkBlockHeight() - self.BTCPAY_DATA['blockIndex']), 0);
   }, self);
-  
+
   self.approxTimeUntilEligible = ko.computed(function() {
     return self.now().getTime() + (self.numBlocksUntilEligible() * APPROX_SECONDS_PER_BLOCK * 1000);
   }, self);
 }
 
 function UpcomingBTCPayFeedViewModel() {
-  /* when an order match occurs where we owe BTC, a btcpay transaction should be made. Due to the potential of a 
+  /* when an order match occurs where we owe BTC, a btcpay transaction should be made. Due to the potential of a
    * blockchain reorg happening at any time, we delay the btcpay by 6 or so blocks so that (barring some kind of catastrophic
    * sized reorg) we're sure that by the time of the bTCpay, the user is making a payment against a real order (i.e. one
    * that won't "disappear" potentially, if there is a reorg)
@@ -268,22 +268,22 @@ function UpcomingBTCPayFeedViewModel() {
   var self = this;
   self.entries = ko.observableArray([]);
   self.lastUpdated = ko.observable(new Date());
-  
+
   self.entries.subscribe(function() {
     WALLET.isSellingBTC(WAITING_BTCPAY_FEED.entries().length + self.entries().length ? true : false);
   });
-  
+
   //Every 60 seconds, run through all entries and update their 'now' members
   setInterval(function() {
     var now = new Date();
     for(var i=0; i < self.entries().length; i++) {
       self.entries()[i].now(now);
-      
+
       //if this btcpay is now eligible, process it
       if(self.entries()[i].numBlocksUntilEligible() == 0)
         self.process(self.entries()[i]['BTCPAY_DATA']);
-    }  
-  }, 60 * 1000); 
+    }
+  }, 60 * 1000);
 
   self.add = function(btcPayData, resort) {
     assert(btcPayData && btcPayData['orderMatchID']);
@@ -301,7 +301,7 @@ function UpcomingBTCPayFeedViewModel() {
     if(resort) self.sort();
     self.lastUpdated(new Date());
   }
-  
+
   self.remove = function(orderHashOrMatchHash) {
     var match = ko.utils.arrayFirst(self.entries(), function(item) {
       if(orderHashOrMatchHash == item.BTCPAY_DATA['orderMatchID']) return true; //matched by the entire order match hash
@@ -315,14 +315,14 @@ function UpcomingBTCPayFeedViewModel() {
       self.lastUpdated(new Date());
     }
   }
-  
+
   self.sort = function() {
     //sort the upcoming BTCpays so that the entry most close to becoming eligible is on top
     self.entries.sort(function(left, right) {
       return left.numBlocksUntilEligible() == right.numBlocksUntilEligible() ? 0 : (left.numBlocksUntilEligible() < right.numBlocksUntilEligible() ? -1 : 1);
     });
   }
-  
+
   self.process = function(btcPayData) {
     //The btcpay required is no longer "upcoming" and a create_btcpay should be broadcast...
 
@@ -336,15 +336,15 @@ function UpcomingBTCPayFeedViewModel() {
     } else {
       PROCESSED_BTCPAY[btcPayData['orderMatchID']] = true;
     }
-    
+
     //remove the entry from the "upcoming" list, as it will be migrating to the "waiting" list
     self.remove(btcPayData['orderMatchID']);
-        
+
     //If automatic BTC pays are enabled, just take care of the BTC pay right now
     if(PREFERENCES['auto_btcpay']) {
 
       if(WALLET.getBalance(btcPayData['myAddr'], BTC, false) >= (btcPayData['btcQuantityRaw']) + MIN_PRIME_BALANCE) {
-        
+
          //user has the sufficient balance
         WALLET.doTransaction(btcPayData['myAddr'], "create_btcpay",
           { order_match_id: btcPayData['orderMatchID'], source: btcPayData['myAddr'], destBtcPay: btcPayData['btcDestAddr'] },
@@ -370,11 +370,11 @@ function UpcomingBTCPayFeedViewModel() {
         WAITING_BTCPAY_FEED.add(btcPayData);
         WALLET.showTransactionCompleteDialog("A payment on a matched order for "
           + "<b class='notoQuantityColor'>" + btcPayData['btcQuantity'] + "</b>"
-          + "<b class='notoAssetColor'>BTC</b> is required, however, the address that made the order ("
+          + "<b class='notoAssetColor'>UNO</b> is required, however, the address that made the order ("
           + "<b class='notoAddrColor'>" + getAddressLabel(btcPayData['myAddr']) + "</b>"
           + ") lacks the balance necessary to do this automatically. This order has been placed in a pending state."
           + "<br/><br/>Please deposit the necessary <b class='notoAssetColor'>BTC</b> into this address and"
-          + "manually make the payment from the Bitcoin icon in the top bar of the site.");  
+          + "manually make the payment from the Unobtanium icon in the top bar of the site.");
       }
 
     } else {
@@ -384,7 +384,7 @@ function UpcomingBTCPayFeedViewModel() {
         + " To finalize, this requires payment of <b class='notoQuantityColor'>"+ btcPayData['btcQuantity'] + "</b>"
         + " <b class='notoAssetColor'>BTC</b>" + " from address"
         + " <b class='notoAddressColor'>" + getAddressLabel(btcPayData['myAddr']) + "</b>."
-        + "<br/><br/><b>You must pay within 10 blocks time, or lose the purchase. Pay now?</b>";          
+        + "<br/><br/><b>You must pay within 10 blocks time, or lose the purchase. Pay now?</b>";
       bootbox.dialog({
         message: prompt,
         title: "Order Settlement (BTC Pay)",
@@ -420,7 +420,7 @@ function UpcomingBTCPayFeedViewModel() {
             }
           },
         }
-      });    
+      });
     }
   }
 
