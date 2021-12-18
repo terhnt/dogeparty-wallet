@@ -1,25 +1,25 @@
 {
   "open": "{{",
   "close": "}}",
-  "name": "Dogeparty Wallet",
-  "xcp": "XDP",
-  "xcp_name": "Dogeparty",
-  "btc": "DOGE",
-  "btc_name": "Dogecoin",
+  "name": "Unoparty Wallet",
+  "xcp": "XUP",
+  "xcp_name": "Unoparty",
+  "btc": "UNO",
+  "btc_name": "Unobtanium",
   "xcp_store_url": "",
   "max_burn_per_address": 5000000,
-  "homepage": "http://dogeparty.io",
+  "homepage": "http://unobtanium.uno",
   "livenet": {
     "burning": {
-      "start": 335642,
-      "end":   378842
+      "start": 1743137,
+      "end":   1762337
     }
   },
   "testnet": {
     "faucet_url": "",
     "burning": {
-      "start": 124678,
-      "end": 26280000
+      "start": 310000,
+      "end": 4017708
     }
   }
 }
