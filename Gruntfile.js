@@ -15,9 +15,9 @@ module.exports = function (grunt) {
                 depsDir: 'vendors/'
                 /*cdn: {
                     hosts: {
-                        'css': ['https://css1.counterwallet.dev', 'https://css2.counterwallet.dev'],
-                        'js': ['https://js1.counterwallet.dev', 'https://js2.counterwallet.dev'],
-                        'assets': ['https://assets1.counterwallet.dev', 'https://assets2.counterwallet.dev']
+                        'css': ['https://css1.unowallet.dev', 'https://css2.unowallet.dev'],
+                        'js': ['https://js1.unowallet.dev', 'https://js2.unowallet.dev'],
+                        'assets': ['https://assets1.unowallet.dev', 'https://assets2.unowallet.dev']
                     }
                 }*/
             },
@@ -41,7 +41,7 @@ module.exports = function (grunt) {
     }
     /*config['chrome-extension'] = {
         options: {
-            name: "counterwallet",
+            name: "unowallet",
             version: pkg.version,
             id: "00000000000000000000000000000000",
             //updateUrl: "http://example.com/extension/111111/",
@@ -54,7 +54,7 @@ module.exports = function (grunt) {
             ]
         }
     }*/
-    
+
     grunt.initConfig(config);
 
     grunt.loadTasks('grunt-tasks');

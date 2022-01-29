@@ -41,10 +41,10 @@ RUN mkdir -p /var/lib/nginx/{body,fastcgi,proxy,scgi,uwsgi}
 # copy over nginx config
 RUN mkdir -p /etc/nginx/sites-enabled
 COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
-# dont copy over docker/nginx/counterwallet.conf.template -- that is moved over at runtime in docker/start.sh
-COPY docker/nginx/counterblock_api.inc /etc/nginx/sites-enabled/counterblock_api.inc
-COPY docker/nginx/counterblock_api_cache.inc /etc/nginx/sites-enabled/counterblock_api_cache.inc
-COPY docker/nginx/counterblock_socketio.inc /etc/nginx/sites-enabled/counterblock_socketio.inc
+# dont copy over docker/nginx/unowallet.conf.template -- that is moved over at runtime in docker/start.sh
+COPY docker/nginx/unoblock_api.inc /etc/nginx/sites-enabled/unoblock_api.inc
+COPY docker/nginx/unoblock_api_cache.inc /etc/nginx/sites-enabled/unoblock_api_cache.inc
+COPY docker/nginx/unoblock_socketio.inc /etc/nginx/sites-enabled/unoblock_socketio.inc
 COPY docker/nginx/upgrade_root /var/www_upgrade_root
 RUN chmod -R 0755 /etc/nginx/nginx.conf /etc/nginx/sites-enabled /var/www_upgrade_root
 
@@ -54,11 +54,11 @@ RUN chmod a+x /usr/local/bin/start.sh
 # set up default SSL certs to be self-signed (can be replaced later)
 RUN apt-get update && apt-get -y install ssl-cert
 RUN mkdir /ssl_config
-RUN cp -a /etc/ssl/certs/ssl-cert-snakeoil.pem /ssl_config/counterwallet.pem
-RUN cp -a /etc/ssl/private/ssl-cert-snakeoil.key /ssl_config/counterwallet.key
+RUN cp -a /etc/ssl/certs/ssl-cert-snakeoil.pem /ssl_config/unowallet.pem
+RUN cp -a /etc/ssl/private/ssl-cert-snakeoil.key /ssl_config/unowallet.key
 
-# add bare counterblock share dir (which should be mounted over)
-RUN mkdir -p /counterblock_data/asset_img /counterblock_data/asset_img.testnet
+# add bare unoblock share dir (which should be mounted over)
+RUN mkdir -p /unoblock_data/asset_img /unoblock_data/asset_img.testnet
 
 # Install newest stable nodejs
 # (the `nodejs` package includes `npm`)
@@ -80,9 +80,9 @@ RUN npm install -g bower grunt browserify uglify-es
 RUN npm install --unsafe-perm -g mocha-phantomjs
 
 # Install project
-COPY . /counterwallet
-RUN rm -rf /counterwallet/build
-WORKDIR /counterwallet
+COPY . /unowallet
+RUN rm -rf /unowallet/build
+WORKDIR /unowallet
 RUN git rev-parse HEAD
 
 RUN cd src; bower --allow-root --config.interactive=false update; cd ..
@@ -104,6 +104,6 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 #RUN apt-get update && apt-get -y install gettext-base
 
 # Copy configuration at last to speed up config changes
-RUN cp -a /counterwallet/counterwallet.conf.json.example /counterwallet/counterwallet.conf.json
+RUN cp -a /unowallet/unowallet.conf.json.example /unowallet/unowallet.conf.json
 
 CMD ["start.sh"]

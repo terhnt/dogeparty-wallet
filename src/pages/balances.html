@@ -10,9 +10,9 @@
           <span data-bind="locale: 'create_new_address'"></span> <i class="fa fa-caret-down"></i>
         </button>
         <ul class="dropdown-menu">
-            <li>
+            <!--><li>
                 <a id="createSegwitAddress" href="#" data-type="segwit" data-bind="locale: 'create_segwit_address'"></a>
-            </li>
+            </li><!-->
             <li>
                 <a id="createAddress" href="#" data-type="normal" data-bind="locale: 'create_regular_address'"></a>
             </li>
@@ -52,7 +52,7 @@
 <div id="oldWalletDetectedNotice" data-bind="fadeVisibleInOnly: WALLET.isOldWallet()" class="alert alert-warning alert-block">
     <i class="fa-fw fa fa-level-up"></i>
     <span data-bind="locale: 'old_wallet_detected'"></span>
-    <a href="https://counterpartytalk.org/t/is-it-possible-to-create-list-of-addresses-and-private-keys-from-counterwallet-pass-phrase/1223" target="_blank" rel="noopener noreferrer" data-bind="locale: 'old_wallet_more_info'"></a>.
+    <a href="https://counterpartytalk.org/t/is-it-possible-to-create-list-of-addresses-and-private-keys-from-unowallet-pass-phrase/1223" target="_blank" rel="noopener noreferrer" data-bind="locale: 'old_wallet_more_info'"></a>.
 </div>
 
 <div class="alert alert-info" id="alertBuyXcp">
@@ -180,7 +180,7 @@
                 <div class="clearfix"></div>
                     Bal: <span data-bind="html: giveRemaining"></span> |
                     Give: <span data-bind="html: giveQuantity"></span> |
-                    Rate: <span data-bind="html: satoshirate"></span> BTC
+                    Rate: <span data-bind="html: satoshirate"></span> UNO
               </div>
             </div> <!-- end widget content body -->
           </div> <!-- end widget div -->

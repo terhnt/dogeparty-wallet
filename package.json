@@ -1,13 +1,13 @@
 {
-  "name": "counterwallet",
-  "description": "Counterwallet",
-  "author": "Counterparty development team",
+  "name": "unowallet",
+  "description": "Unowallet",
+  "author": "Counterparty development team / Unoparty development team",
   "license": "(CDDL-1.0)",
   "version": "1.8.0",
   "main": "build/index.html",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CounterpartyXCP/counterwallet.git"
+    "url": "https://github.com/terhnt/unowallet.git"
   },
   "dependencies": {
     "cryptojs": "2.5.3",
@@ -34,7 +34,7 @@
     "build": "grunt build --dontcheckdeps && cd ./src && bower --allow-root --config.interactive=false update",
     "dev": "grunt build --dontcheckdeps --dontminify",
     "q": "grunt build --dontcheckdeps",
-    "test": "./node_modules/mocha-phantomjs/bin/mocha-phantomjs test/test.html --ignore-ssl-errors=true --ignore-resource-errors --ssl-protocol=any # phantomjs has issues with counterwallet.io SSL cert"
+    "test": "./node_modules/mocha-phantomjs/bin/mocha-phantomjs test/test.html --ignore-ssl-errors=true --ignore-resource-errors --ssl-protocol=any # phantomjs has issues with unowallet.io SSL cert"
   },
   "engine": "node >= 0.10"
 }

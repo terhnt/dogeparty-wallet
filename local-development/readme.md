@@ -4,9 +4,9 @@ Local Counterwallet Development Instructions
 Introduction
 -------------------------------
 
-To develop on counterwallet locally, this folder contains configuration for a local nginx server that can proxy requests to a remote counterwallet instance.
+To develop on unowallet locally, this folder contains configuration for a local nginx server that can proxy requests to a remote unowallet instance.
 
-You may use your own remote counterwallet server or the public counterwallet server at wallet.counterwallet.io.
+You may use your own remote unowallet server or the public unowallet server at wallet.unowallet.io.
 
 
 Usage
@@ -27,7 +27,7 @@ cd development
 ./run-dev-server.sh
 ```
 
-To customize the remote counterwallet host:
+To customize the remote unowallet host:
 ```
 cd development
 DEV_REMOTE_HOST="my.other-server.io" ./run-dev-server.sh

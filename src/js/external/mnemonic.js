@@ -28,7 +28,7 @@
             }
             this.random = new Uint32Array(bits/32);
             
-            //COUNTERWALLET MODIFICATION: IMPLEMENTED FALLBACK TO window.msCrypto AND ERROR
+            //UNOWALLET MODIFICATION: IMPLEMENTED FALLBACK TO window.msCrypto AND ERROR
             // MESSAGE ON NO SUITABLE NATIVE CRYPTO IMPLEMENTATION
             if (window.crypto && window.crypto.getRandomValues) {
               window.crypto.getRandomValues(this.random); // Catch no entropy here.
@@ -39,7 +39,7 @@
               bootbox.alert(errText);
               assert(false, errText);
             }
-            //COUNTERWALLET MODIFICATION END
+            //UNOWALLET MODIFICATION END
         } else {
             // Reconstruct from words
             i=0, n = Mnemonic.wc;

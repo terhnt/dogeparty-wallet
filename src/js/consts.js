@@ -42,7 +42,7 @@ var DEFAULT_PREFERENCES = {
   'has_accepted_license': false
 };
 
-var COUNTERWALLET_CONF_LOCATION = "/counterwallet.conf.json";
+var UNOWALLET_CONF_LOCATION = "/unowallet.conf.json";
 
 var NUMERIC_ASSET_ID_MIN = bigInt(26).pow(12).add(1);
 var NUMERIC_ASSET_ID_MAX = bigInt(256).pow(8);
@@ -182,11 +182,11 @@ var BET_MATCHES_STATUS = {
 
 var LEVERAGE_UNIT = 5040;
 
-var MAINNET_UNSPENDABLE = '1CounterpartyXXXXXXXXXXXXXXXUWLpVr';
-var TESTNET_UNSPENDABLE = 'mvCounterpartyXXXXXXXXXXXXXXW24Hef';
-var REGTEST_UNSPENDABLE = 'mvCounterpartyXXXXXXXXXXXXXXW24Hef';
-var TESTNET_BURN_START = 154908;
-var TESTNET_BURN_END = 4017708;
+var MAINNET_UNSPENDABLE = 'uNopartyXburnXXXXXXXXXXXXXXXWJmsqn';
+var TESTNET_UNSPENDABLE = 'UUnoPartyXburnTestnetXXXXXXXXFEeN4';
+var REGTEST_UNSPENDABLE = '1UnopartyxBurnxAddrXXXXXXXXXX42dPh';
+var TESTNET_BURN_START = 5967;
+var TESTNET_BURN_END = 400000;
 var REGTEST_BURN_START = 101;
 var REGTEST_BURN_END = 150000000;
 
@@ -208,10 +208,10 @@ var CURRENT_PAGE_URL = ''; // set in loadUrl()
 
 //selective disablement
 var DISABLED_FEATURES_SUPPORTED = ['betting', 'dividend', 'exchange', 'leaderboard', 'portfolio', 'stats', 'history']; //what can be disabled
-var DISABLED_FEATURES = []; //set in counterwallet.js
+var DISABLED_FEATURES = []; //set in unowallet.js
 
 // restricted action
-var RESTRICTED_AREA = {} // set in counterwallet.js
+var RESTRICTED_AREA = {} // set in unowallet.js
 
 var RESTRICTED_AREA_MESSAGE = {
   'pages/simplebuy.html': 'buy_xcp_if_legal'
@@ -241,39 +241,63 @@ var USE_TESTNET = (   (((location.pathname == "/" || location.pathname == "/src/
 );
 
 var BLOCKEXPLORER_URL = USE_TESTNET ? "https://testnet.xchain.io" : "https://xchain.io";
-var GOOGLE_ANALYTICS_UAID = null; //will be set in counterwallet.js
-var ROLLBAR_ACCESS_TOKEN = null; //will be set in counterwallet.js
+var GOOGLE_ANALYTICS_UAID = null; //will be set in unowallet.js
+var ROLLBAR_ACCESS_TOKEN = null; //will be set in unowallet.js
 
 var TRANSACTION_DELAY = 5000; // delay between transaction to avoid error -22 (vin reused)
 var TRANSACTION_MAX_RETRY = 5; // max retry when transaction failed (don't include first transaction, so 3 retry means 4 queries)
 
-var DONATION_ADDRESS = USE_TESTNET ? 'n4MGGJBkW9RjRKBbZfBAceHDndhywvVPV9' : '19U6MmLLumsqxXSBMB5FgYXbezgXYC6Gpe';
+var DONATION_ADDRESS = USE_TESTNET ? 'UVKQywFfmP5TvbLsEwQaXTbLspck8UuK3w' : 'uVVuwXm2mDK9pr9XkWT5k7ihQyoSC8y2MW';
 
-var APPROX_SECONDS_PER_BLOCK = USE_TESTNET ? 20 * 60 : 8 * 60; //a *rough* estimate on how many seconds per each block (used for estimating open order time left until expiration, etc)
+var APPROX_SECONDS_PER_BLOCK = USE_TESTNET ? 3 * 60 : 3 * 60; //a *rough* estimate on how many seconds per each block (used for estimating open order time left until expiration, etc)
 
 var KEY_ASSET = {
-  'BTC': 'BTC',
-  'XCP': 'XCP',
+  'BTC': 'UNO',
+  'XCP': 'XUP',
   'USD': 'USD',
-  'Bitcoin': 'Bitcoin',
-  'Counterparty': 'Counterparty'
+  'Bitcoin': 'Unobtanium',
+  'Counterparty': 'Unoparty'
 };
 
 var KEY_ASSET_WEBSITE = {
-  'BTC': 'https://bitcoin.org/',
-  'XCP': 'https://counterparty.io/'
+  'BTC': 'https://unobtanium.uno',
+  'XUP': 'https://unoparty.io/'
 };
 
 bitcoinjs.networks.regtest = {
-    messagePrefix: '\x18Bitcoin Signed Message:\n',
-    bech32: 'bcrt',
+    messagePrefix: '\x1bUnobtanium Signed Message:\n',
+    bech32: 'ucrt',
     bip32: {
       public: 0x043587cf,
       private: 0x04358394
     },
-    pubKeyHash: 0x6f,
-    scriptHash: 0xc4,
-    wif: 0xef
+    pubKeyHash: 0x0,
+    scriptHash: 0x05,
+    wif: 0x80
   }
 
-bitcoinjs.networks.mainnet = bitcoinjs.networks.bitcoin // support for bitcore's name
+  bitcoinjs.networks.testnet = {
+      messagePrefix: '\x1bUnobtanium Signed Message:\n',
+      bech32: 'uctn',
+      bip32: {
+        public: 0x043586CE,
+        private: 0x04358293
+      },
+      pubKeyHash: 0x44, //68
+      scriptHash: 0x1E, //30
+      wif: 0xEF //239
+    }
+
+    bitcoinjs.networks.mainnet = {
+        messagePrefix: '\x1bUnobtanium Signed Message:\n',
+        bech32: 'ucmn',
+        bip32: {
+          public: 0x0488B21E,
+          private: 0x0488ADE4
+        },
+        pubKeyHash: 0x82, //130
+        scriptHash: 0x1E, //30
+        wif: 0xE0 //224
+      }
+
+//bitcoinjs.networks.mainnet = bitcoinjs.networks.bitcoin // support for bitcore's name

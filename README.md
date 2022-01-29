@@ -1,5 +1,5 @@
-[![Build Status Travis](https://travis-ci.org/CounterpartyXCP/counterwallet.svg?branch=develop)](https://travis-ci.org/CounterpartyXCP/counterwallet)
-[![Build Status Circle](https://circleci.com/gh/CounterpartyXCP/counterwallet.svg?&style=shield)](https://circleci.com/gh/CounterpartyXCP/counterwallet)
+[![Build Status Travis](https://travis-ci.org/terhnt/unowallet.svg?branch=develop)](https://travis-ci.org/terhnt/unowallet)
+[![Build Status Circle](https://circleci.com/gh/terhnt/unowallet.svg?&style=shield)](https://circleci.com/gh/terhnt/unowallet)
 [![Slack Status](http://slack.counterparty.io/badge.svg)](http://slack.counterparty.io)
 
 Counterwallet
@@ -13,9 +13,9 @@ Originally based off of [Carbonwallet](http://www.carbonwallet.com) (however vir
 Production Systems
 -------------------
 
-* Main page: **[counterwallet.io](https://counterwallet.io/)**
-* Primary server -- Mainnet: **[wallet.counterwallet.io](https://wallet.counterwallet.io/)**
-* Primary server -- Testnet: **[wallet-testnet.counterwallet.io](https://wallet-testnet.counterwallet.io/)**
+* Main page: **[unowallet.io](https://unowallet.io/)**
+* Primary server -- Mainnet: **[wallet.unowallet.io](https://wallet.unowallet.io/)**
+* Primary server -- Testnet: **[wallet-testnet.unowallet.io](https://wallet-testnet.unowallet.io/)**
 
 
 Features
@@ -82,7 +82,7 @@ grunt freeze
 1. Create an account on [Transifex](https://www.transifex.com/)
 2. In your home directory, create a file named `.transifex` and put your Transifex username and password into it in this format: `user:password`
 3. Run `grunt build` to download translations
-4. Add the languages you want to support to `AVAILABLE_LANGUAGES` in **counterwallet.conf.json** - you can use **counterwallet.conf.json.example** as a template. The template file contains **only** the setting relevant to languages and does not replace the rest of variables required in that file (refer to Federeated Node documentation for additional details about `counterwallet.conf`).
+4. Add the languages you want to support to `AVAILABLE_LANGUAGES` in **unowallet.conf.json** - you can use **unowallet.conf.json.example** as a template. The template file contains **only** the setting relevant to languages and does not replace the rest of variables required in that file (refer to Federeated Node documentation for additional details about `unowallet.conf`).
 
 Setting up your own Counterwallet Server
 -----------------------------------------
@@ -106,8 +106,8 @@ sudo apt-get install -y nodejs
 ```
 5. Dowload dependencies in the root folder: `npm install`
 6. Build: `npm run build`. The application will be stored in the `./build` subdirectory.
-4. Configure: Copy `counterwallet.conf.json.example` to .`/build/counterwallet.conf.json`.
-  - Notice the `servers` parameter in JSON file. It's responsible for API endpoint(s). By default it's `https://wallet.counterwallet.io`
+4. Configure: Copy `unowallet.conf.json.example` to .`/build/unowallet.conf.json`.
+  - Notice the `servers` parameter in JSON file. It's responsible for API endpoint(s). By default it's `https://wallet.unowallet.io`
 6. Run: `npm run serve`
 7. Use: Visit `http://localhost:3000`
 
@@ -132,7 +132,7 @@ You can run tests in your browser by doing the above steps and;
 
 ### Development without a full node
 
-To work on counterwallet without running a full node and supporting services locally, please see the scripts located in the [local development folder](local-development).
+To work on unowallet without running a full node and supporting services locally, please see the scripts located in the [local development folder](local-development).
 
 
 License

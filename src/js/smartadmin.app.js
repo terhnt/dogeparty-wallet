@@ -136,7 +136,7 @@ $(document).ready(function() {
     $.root_.removeClass('search-mobile');
   });
 
-  //COUNTERWALLET: START MOD
+  //UNOWALLET: START MOD
   $('.activity-dropdown').click(function(e) {
     var $this = $(this);
 
@@ -164,7 +164,7 @@ $(document).ready(function() {
 
     e.preventDefault();
   });
-  //COUNTERWALLET: END MOD
+  //UNOWALLET: END MOD
 
   $(document).mouseup(function(e) {
     if (!$('.ajax-dropdown').is(e.target)// if the target of the click isn't the container...
@@ -243,9 +243,9 @@ $(document).ready(function() {
    */
 
   function logout() {
-    //COUNTERWALLET: START MOD
+    //UNOWALLET: START MOD
     location.reload(false); //this will take care of everything for us :)
-    //COUNTERWALLET: END MOD
+    //UNOWALLET: END MOD
   }
 
   /*
@@ -311,7 +311,7 @@ $(document).ready(function() {
 
       var elem = $(this);
       elems = elems.add(elem);
-      //COUNTERWALLETD: START MOD (so that this plays nicely with highstock lib)      
+      //UNOWALLETD: START MOD (so that this plays nicely with highstock lib)      
       try {
         $.data(this, str_data, {
           w : elem.width(),
@@ -323,7 +323,7 @@ $(document).ready(function() {
           h : $(elem[0].container).height()
         });
       }
-      //COUNTERWALLETD: END MOD
+      //UNOWALLETD: END MOD
       
       if (elems.length === 1) {
         loopy();
@@ -350,7 +350,7 @@ $(document).ready(function() {
 
       function new_handler(e, w, h) {
         var elem = $(this), data = $.data(this, str_data);
-        //COUNTERWALLETD: START MOD (so that this plays nicely with highstock lib)
+        //UNOWALLETD: START MOD (so that this plays nicely with highstock lib)
         try {
           data.w = w !== undefined ? w : elem.width();
           data.h = h !== undefined ? h : elem.height();
@@ -358,7 +358,7 @@ $(document).ready(function() {
           data.w = w !== undefined ? w : $(elem[0].container).width();
           data.h = h !== undefined ? h : $(elem[0].container).height();
         }
-        //COUNTERWALLETD: END MOD
+        //UNOWALLETD: END MOD
 
         old_handler.apply(this, arguments);
       };
@@ -375,7 +375,7 @@ $(document).ready(function() {
   function loopy() {
     timeout_id = window[str_setTimeout](function() {
       elems.each(function() {
-        //COUNTERWALLETD: START MOD (so that this plays nicely with highstock lib)
+        //UNOWALLETD: START MOD (so that this plays nicely with highstock lib)
         //var elem = $(this), width = elem.width(), height = elem.height(), data = $.data(this, str_data);
         var elem = $(this);
         var width = null;
@@ -388,7 +388,7 @@ $(document).ready(function() {
           height = $(elem[0].container).height(); 
         }
         var data = $.data(this, str_data);
-        //COUNTERWALLETD: END MOD
+        //UNOWALLETD: END MOD
 
         if (width !== data.w || height !== data.h) {
           elem.trigger(str_resize, [data.w = width, data.h = height]);
@@ -1148,7 +1148,7 @@ window.loadGoogleMaps = function() {
  * loadScript("js/my_lovely_script.js", myPrettyCode);
  */
 
-//COUNTERWALLET: START MOD
+//UNOWALLET: START MOD
 function loadScript(scriptName, callback) {
   var scriptID = "script_" + scriptName.replace(/\//g, "__").replace(/\.js/g, "")
   if($("#" + scriptID).length == 0 || IS_DEV) {
@@ -1172,7 +1172,7 @@ function loadScript(scriptName, callback) {
     callback();
   }
 }
-//COUNTERWALLET: END MOD
+//UNOWALLET: END MOD
 
 /* ~ END: LOAD SCRIPTS */
 
@@ -1259,12 +1259,12 @@ function checkURL() {
   container = $('#content');
   // Do this if url exists (for page refresh, etc...)
   
-  //COUNTERWALLET: START MOD
+  //UNOWALLET: START MOD
   //console.log("HERE, url: " + url);
   //console.log("HERE, login pane hidden?: " + $('#logon').is(':hidden'));
   //if (url) {
   if (url && $('#logon').is(':hidden')) {
-  //COUNTERWALLET: END MOD
+  //UNOWALLET: END MOD
   
     // remove all active class
     $('nav li.active').removeClass("active");
@@ -1279,15 +1279,15 @@ function checkURL() {
     // parse url to jquery
     loadURL(url + location.search, container);
   } else {
-    //COUNTERWALLET: START MOD
+    //UNOWALLET: START MOD
     //Dont load anything, just reset any hash
     //window.location.hash = '';
-    //COUNTERWALLET: END MOD
+    //UNOWALLET: END MOD
   }
 
 }
 
-//COUNTERWALLET: START MOD
+//UNOWALLET: START MOD
 function loadPage(url, container) {
   $.ajax({
     type : "GET",
@@ -1319,14 +1319,14 @@ function loadPage(url, container) {
     error : function(xhr, ajaxOptions, thrownError) {
       container.html('<h4 style="margin-top:10px; display:block; text-align:left"><i class="fa fa-warning txt-color-orangeDark"></i> ' + i18n.t('error404') + '</h4>');
     },
-//COUNTERWALLET: START MOD
+//UNOWALLET: START MOD
     async : true
-//COUNTERWALLET: END MOD
+//UNOWALLET: END MOD
   });
 }
-//COUNTERWALLET: END MOD
+//UNOWALLET: END MOD
 
-//COUNTERWALLET: START MOD
+//UNOWALLET: START MOD
 function loadURL(url, container) {
 
   checkCountry(url, function() {
@@ -1334,7 +1334,7 @@ function loadURL(url, container) {
   });
 
 }
-//COUNTERWALLET: END MOD
+//UNOWALLET: END MOD
 
 // UPDATE BREADCRUMB
 function drawBreadCrumb() {
@@ -1431,7 +1431,7 @@ $('body').on('click', function(e) {
 });
 
 
-//COUNTERWALLET: START MOD
+//UNOWALLET: START MOD
 //THIS FUNCTION MOVED OVER FROM datatables.html, and changed the selectors to use classes (e.g. table.dt_basic) instead of IDs (#dt_basic)
 function runDataTables(specificTableID, destroyOption, extraProps) {
   if(typeof(destroyOption)==='undefined') destroyOption = true;
@@ -1539,4 +1539,4 @@ jQuery.extend( jQuery.fn.dataTableExt.oSort, {
         return naturalSort(a,b) * -1;
     }
 } );
-//COUNTERWALLET: END MOD
+//UNOWALLET: END MOD

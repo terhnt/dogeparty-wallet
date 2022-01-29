@@ -22,7 +22,7 @@ var setNetwork = function(network) {
 
   // 'fix' for when running tests through `mocha-phantomjs`
   if (cwURLs().length === 0 || (cwURLs().length === 1 && cwURLs()[0] === "file://")) {
-    cwURLs(['https://wallet.counterwallet.io']);
+    cwURLs(['https://wallet.unowallet.io']);
   }
 
   // update URLs

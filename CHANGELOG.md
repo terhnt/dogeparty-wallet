@@ -103,7 +103,7 @@ Full list of changes are at: http://goo.gl/AICdol
 * Added Rock-Paper-Scissors
 * Added Zeroconf support (show pending balances for assets)
 * Added IP-based blocking for betting, RPS and dividend issuance. We are currently blocking people
-  with US-based IP addresses from using these features on counterwallet.io itself.
+  with US-based IP addresses from using these features on unowallet.io itself.
 
 **Fixes:**
 * Fixed issue with asset name validation (length checking was incorrect)
@@ -196,8 +196,8 @@ Full list of changes are at: http://goo.gl/AICdol
     
 ### v0.9.4 ###
 **Enhancements:**
-* when wanting to do a trade where BTC we will purchased (i.e. a btcpay is required), show the online status of counterwallet users (as available) with trades appearing that offer to sell BTC. this is important because BTCpays must complete in a certain (shortish) period of time, and trading with a user that is marked online has a higher percentage chance of fully going through. online status is tracked by the server in an anonymous fashion (i.e. using the walletID identifier). Note that this change does not work with old trade (it will only work with trades that are made *after* this update is put into place)
-* added /online command to chat, which will tell you if the user you specify is online or not (e.g. type "/online cityglut" to see if cityglut currently has counterwallet running).
+* when wanting to do a trade where BTC we will purchased (i.e. a btcpay is required), show the online status of unowallet users (as available) with trades appearing that offer to sell BTC. this is important because BTCpays must complete in a certain (shortish) period of time, and trading with a user that is marked online has a higher percentage chance of fully going through. online status is tracked by the server in an anonymous fashion (i.e. using the walletID identifier). Note that this change does not work with old trade (it will only work with trades that are made *after* this update is put into place)
+* added /online command to chat, which will tell you if the user you specify is online or not (e.g. type "/online cityglut" to see if cityglut currently has unowallet running).
 * added /msg command to chat for private messaging between handles...e.g. /msg halfcab yo wazzup
 
 **Fixes:**
@@ -226,7 +226,7 @@ Full list of changes are at: http://goo.gl/AICdol
 **Enhancements:**
 * added the ASSET LEADERBOARD functionality, which shows the top 100 counterparty assets (that have actual trade data)* asset market info is now pre-compiled (i.e. calculated and stored) every 10 minutes, due to the addition of the asset leaderboard* added notification pane messages for bets and broadcasts
 * servers store chat history now in database, and added get_chat_history() call. 
-* because of the above, chat history persists between server restarts (so you still get the newest line even if the counterwalletd service needs to be restarted)
+* because of the above, chat history persists between server restarts (so you still get the newest line even if the unowalletd service needs to be restarted)
 * fixed up and enhanced the Asset Portfolio page
 
 **Fixes:**
@@ -234,10 +234,10 @@ Full list of changes are at: http://goo.gl/AICdol
 * buy/sell: order book display changed to percentages based adaptive display instead of absolute fee based (i.e. works as it should now :) 
 * chat handle completion on tab is now case insensitive
 * choosing your handle when starting a chat for the first time now will tell you if the handle is in use or not
-* fixes for nginx "crash" situation, fix correctly closing unused sockets in counterwalletd in one or two places
+* fixes for nginx "crash" situation, fix correctly closing unused sockets in unowalletd in one or two places
 * address sweeping was borked. fixed.
 * chat was totally clearing history after 200 lines when it should have just been removing the first 5 lines
-* 0.9.2.1: bug fix for counterwalletd not properly rebuilding its app_config collection if the cwd DB version went up
+* 0.9.2.1: bug fix for unowalletd not properly rebuilding its app_config collection if the cwd DB version went up
 
 ### v0.9.1 ###
 **Enhancements:**

@@ -11,7 +11,7 @@ src/vendors/
 npm-debug.log
 src/bitcore.html
 src/bitcoinjs.html
-counterwallet.conf.json
+unowallet.conf.json
 src/js/jquery-timeago.i18n.js
-local-development/etc/includes/counterwallet.conf
+local-development/etc/includes/unowallet.conf
 local-development/var
