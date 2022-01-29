@@ -10,8 +10,9 @@ module.exports = function (grunt) {
                 buildDir: buildDir,
                 srcDir: 'src/',
                 assetsHome: 'assets/',
-                checkDeps: true,
-                depsDir: 'vendors/',
+                checkDeps: process.argv.indexOf('--dontcheckdeps') === -1,
+                minify: process.argv.indexOf('--dontminify') === -1,
+                depsDir: 'vendors/'
                 /*cdn: {
                     hosts: {
                         'css': ['https://css1.counterwallet.dev', 'https://css2.counterwallet.dev'],
@@ -23,7 +24,8 @@ module.exports = function (grunt) {
             process: {
                 files: [
                     {cwd: 'src/', src: 'index.html', dest: buildDir, expand: true},
-                    {cwd: 'src/pages/', src: '*.html', dest: buildDir+'pages/', expand: true}
+                    {cwd: 'src/pages/', src: '*.html', dest: buildDir+'pages/', expand: true},
+                    {cwd: 'src/locales/en', src: '*.json', dest: buildDir+'locales/en', expand: true}
                 ]
             },
             copy: {
@@ -32,6 +34,9 @@ module.exports = function (grunt) {
                     {cwd: 'src/assets/', src: '*', dest: buildDir+'assets/', expand: true}
                 ]
             }
+        },
+        transifex: {
+            languages: ['fr', 'de', 'da', 'zh_CN', 'zh_TW', 'fi', 'tr', 'it', 'ja', 'es', 'ru', 'cs']
         }
     }
     /*config['chrome-extension'] = {

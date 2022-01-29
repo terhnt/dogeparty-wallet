@@ -1,6 +1,10 @@
-var bitcore = require('bitcore');
-// no reason to be used elsewhere
-var NETWORK = USE_TESTNET ? bitcore.networks.testnet : bitcore.networks.livenet;
+/* globals async */ // async binds itself to window
+
+var bitcore = require('bitcore-lib');
+var bitcoreMessage = require('bitcore-message'); // this also binds itself to bitcore.Message as soon as it's require'd
+
+// this 'global' is overwritten by tests!
+var NETWORK = (USE_TESTNET || USE_REGTEST) ? bitcore.Networks.testnet : bitcore.Networks.livenet;
 
 var CWHierarchicalKey = function(passphrase, password) {
   checkArgType(passphrase, "string");
@@ -9,7 +13,7 @@ var CWHierarchicalKey = function(passphrase, password) {
     passphrase = CWBitcore.decrypt(passphrase, password);
   }
   // same as bitcoinjs-lib :
-  // m : masterkery / 0' : first private derivation / 0 : external account / i : index
+  // m : master key / 0' : first private derivation / 0 : external account / i : index
   this.basePath = 'm/0\'/0/';
   this.useOldHierarchicalKey = false;
   this.init(passphrase);
@@ -19,20 +23,28 @@ CWHierarchicalKey.prototype.init = function(passphrase) {
   this.passphrase = passphrase;
 
   var words = $.trim(passphrase.toLowerCase()).split(' ');
-  
-  // if first word=='old' => old HierarchicalKey
-  if (words.length==13) {
+
+  // if first word == 'old' then use the  oldHierarchicalKey
+  if (words.length == 13) {
     var first = words.shift();
-    this.useOldHierarchicalKey = (first == 'old');
+    if (first == 'old') {
+      this.useOldHierarchicalKey = true;
+    } else {
+      throw new Error("mnemonic was 13 words but the first was not 'old'");
+    }
   }
 
-  var seed = this.wordsToSeed(words);   
-  this.HierarchicalKey = this.useOldHierarchicalKey ? this.oldHierarchicalKeyFromSeed(seed) : bitcore.HierarchicalKey.seed(seed, NETWORK.name);
-  // this instance used for sweeping old wallet
-  this.oldHierarchicalKey = this.oldHierarchicalKeyFromSeed(seed);
+  var seed = CWHierarchicalKey.wordsToSeed(words);
+
+  /*
+   * for historical reasons we create an 'old' HDPrivateKey where the seed is used as a string and wrangled a bit
+   * this is used for sweeping the old wallet into the new wallet
+   */
+  this.oldHierarchicalKey = bitcore.HDPrivateKey.fromSeed(bitcore.deps.Buffer(wordArrayToBytes(bytesToWordArray(seed)), 'ascii'), NETWORK);
+  this.HierarchicalKey = this.useOldHierarchicalKey ? this.oldHierarchicalKey : bitcore.HDPrivateKey.fromSeed(seed, NETWORK);
 }
 
-CWHierarchicalKey.prototype.wordsToSeed = function(words) {
+CWHierarchicalKey.wordsToSeed = function(words) {
   var m = new Mnemonic(words);
   return m.toHex();
 }
@@ -41,58 +53,23 @@ CWHierarchicalKey.prototype.getOldAddressesInfos = function(callback) {
   var addresses = [];
   var cwkeys = {};
 
-  for (var i=0; i<=9; i++) {
+  for (var i = 0; i <= 9; i++) {
 
-    var derivedKey = this.oldHierarchicalKey.derive(this.basePath+i);
-    var key = derivedKey.eckey.private.toString('hex');
-    var cwk = new CWPrivateKey(key);
+    var derivedKey = this.oldHierarchicalKey.derive(this.basePath + i);
+
+    var cwk = new CWPrivateKey(derivedKey.privateKey);
     var address = cwk.getAddress();
     addresses.push(address);
     cwkeys[address] = cwk;
   }
 
   Counterblock.getBalances(addresses, cwkeys, callback);
-  
-}
-
-// This function return an Bitcore HierarchicalKey instance
-// compatible with old counterwallet. ie generates
-// sames addresses
-// seed: hex string
-CWHierarchicalKey.prototype.oldHierarchicalKeyFromSeed = function(seed) {
-  checkArgType(seed, "string");
-  // here we need to pass seed as buffer, BUT for 
-  // "historical" reason we keep seed as string to not
-  // change generated addresses from the same passphrase.
-  var words = bytesToWordArray(seed);  
-  var hash = CryptoJS.HmacSHA512(words, 'Bitcoin seed');
-  hash = wordArrayToBytes(hash);
-  hash = bitcore.Buffer(hash);
-  
-  var priv =  hash.slice(0, 32).toString('hex');
-  
-  var eckey = new bitcore.Key();
-  eckey.private = hash.slice(0, 32);
-  eckey.regenerateSync();
-
-  var hkey = new bitcore.HierarchicalKey;
-  hkey.depth = 0x00;
-  hkey.parentFingerprint = bitcore.Buffer([0, 0, 0, 0]);
-  hkey.childIndex = bitcore.Buffer([0, 0, 0, 0]);
-  hkey.chainCode = hash.slice(32, 64);
-  hkey.version = NETWORK.hkeyPrivateVersion;
-  hkey.eckey = eckey;
-  hkey.hasPrivateKey = true;
-  hkey.pubKeyHash = bitcore.util.sha256ripe160(hkey.eckey.public);
-  hkey.buildExtendedPublicKey();
-  hkey.buildExtendedPrivateKey();
-  return hkey;
 }
 
 CWHierarchicalKey.prototype.getAddressKey = function(index) {
   checkArgType(index, "number");
-  var derivedKey = this.HierarchicalKey.derive(this.basePath+index);
-  return new CWPrivateKey(derivedKey.eckey.private.toString('hex'));
+  var derivedKey = this.HierarchicalKey.derive(this.basePath + index);
+  return new CWPrivateKey(derivedKey.privateKey);
 }
 
 CWHierarchicalKey.prototype.cryptPassphrase = function(password) {
@@ -106,42 +83,36 @@ CWHierarchicalKey.prototype.getQuickUrl = function(password) {
 }
 
 
-
 // priv: private key wif or hex
 var CWPrivateKey = function(priv) {
-  checkArgType(priv, "string");
   this.priv = null;
   this.init(priv);
 }
 
 CWPrivateKey.prototype.init = function(priv) {
   try {
+    if (typeof priv === "string") {
+      priv = bitcore.PrivateKey(priv, NETWORK);
+    }
     this.priv = priv;
-    this.walletKey = new bitcore.WalletKey({network: NETWORK});
-    this.walletKey.fromObj({priv:this.priv});
   } catch (err) {
     this.priv = null;
   }
 }
 
 CWPrivateKey.prototype.getAddress = function() {
-  try {
-    var wkObj = this.walletKey.storeObj();
-    return wkObj.addr;
-  } catch (err) {
-    return false;
-  }
+  return this.priv.toAddress(NETWORK).toString();
 }
 
 CWPrivateKey.prototype.getAltAddress = function() {
-  var cwk = new CWPrivateKey(this.priv);
-  cwk.walletKey.privKey._compressed = !cwk.walletKey.privKey._compressed;
-  cwk.walletKey.privKey.regenerateSync();
-  return cwk.walletKey.storeObj().addr;
+  var tmpPriv = this.priv.toObject();
+  tmpPriv.compressed = !tmpPriv.compressed;
+
+  return bitcore.PrivateKey(tmpPriv).toAddress(NETWORK).toString();
 }
 
 CWPrivateKey.prototype.getAddresses = function() {
-  return addresses = [
+  return [
     this.getAddress(),
     this.getAltAddress()
   ];
@@ -149,8 +120,7 @@ CWPrivateKey.prototype.getAddresses = function() {
 
 CWPrivateKey.prototype.isValid = function() {
   try {
-    var address = new bitcore.Address(this.getAddress());
-    return address.isValid() && (address.version() == NETWORK.addressVersion);
+    return bitcore.Address.isValid(this.getAddress(), NETWORK, bitcore.Address.Pay2PubKeyHash);
   } catch (err) {
     return false;
   }
@@ -158,27 +128,37 @@ CWPrivateKey.prototype.isValid = function() {
 
 CWPrivateKey.prototype.getPub = function() {
   try {
-    return this.walletKey.privKey.public.toString('hex');
+    return this.priv.toPublicKey().toString();
   } catch (err) {
     return false;
   }
 }
 
-CWPrivateKey.prototype.getBitcoreECKey = function() {
-  try {
-    return this.walletKey.privKey;
-  } catch (err) {
-    return false;
-  }
-}
-
+/**
+ * @param {string} message
+ * @param {string} format    hex, base64
+ * @returns {*}
+ */
 CWPrivateKey.prototype.signMessage = function(message, format) {
-  return bitcore.Message.sign(message, this.getBitcoreECKey()).toString(format);
+  var base64 = bitcore.Message(message).sign(this.priv); // always returns base64 string
+  return bitcore.deps.Buffer(base64, 'base64').toString(format || 'base64');
 }
 
-CWPrivateKey.prototype.signRawTransaction = function(unsignedHex) {
-  checkArgType(unsignedHex, "string");
-  return CWBitcore.signRawTransaction(unsignedHex, this);
+CWPrivateKey.prototype.signRawTransaction = function(unsignedHex, disableIsFullySigned, cb) {
+  if (typeof disableIsFullySigned === "function") {
+    cb = disableIsFullySigned;
+    disableIsFullySigned = null;
+  }
+  checkArgType(cb, "function");
+
+  try {
+    CWBitcore.signRawTransaction(unsignedHex, this, disableIsFullySigned, cb);
+  } catch (err) {
+    // async.nextTick to avoid parent trycatch
+    async.nextTick(function() {
+      cb(err);
+    });
+  }
 }
 
 CWPrivateKey.prototype.checkTransactionDest = function(txHex, destAdress) {
@@ -187,176 +167,512 @@ CWPrivateKey.prototype.checkTransactionDest = function(txHex, destAdress) {
     return CWBitcore.checkTransactionDest(txHex, this.getAddresses(), destAdress);
   } catch (err) {
     return false;
-  }  
+  }
 }
 
-CWPrivateKey.prototype.checkAndSignRawTransaction = function(unsignedHex, destAdress) {
-  checkArgsType(arguments, ["string", "object"]);
-  if (this.checkTransactionDest(unsignedHex, destAdress)) {
-    return this.signRawTransaction(unsignedHex);
+CWPrivateKey.prototype.checkAndSignRawTransaction = function(unsignedHex, destAdress, disableIsFullySigned, cb) {
+  if (typeof(destAdress) == 'string') {
+    destAdress = [destAdress];
   }
-  return false;
+  if (typeof disableIsFullySigned === "function") {
+    cb = disableIsFullySigned;
+    disableIsFullySigned = null;
+  }
+  checkArgType(cb, "function");
+
+  try {
+    if (this.checkTransactionDest(unsignedHex, destAdress)) {
+      this.signRawTransaction(unsignedHex, disableIsFullySigned, cb);
+    } else {
+      throw new Error("Failed to validate transaction destination");
+    }
+  } catch (err) {
+    // async.nextTick to avoid parent trycatch
+    async.nextTick(function() {
+      cb(err);
+    });
+  }
 }
 
 CWPrivateKey.prototype.getWIF = function() {
-  var buf = new bitcore.Buffer(this.priv, 'hex');
-  var privkey = new bitcore.PrivateKey(NETWORK.privKeyVersion, buf, true);
-  return privkey.as('base58');
+  return this.priv.toWIF();
 }
 
 CWPrivateKey.prototype.encrypt = function(message) {
-  return CWBitcore.encrypt(message, this.priv);
+  return CWBitcore.encrypt(message, this.priv.toString());
 }
 
 CWPrivateKey.prototype.decrypt = function(cryptedMessage) {
-  return CWBitcore.decrypt(cryptedMessage, this.priv);
+  return CWBitcore.decrypt(cryptedMessage, this.priv.toString());
 }
 
 // TODO: rename to be more generic
-var CWBitcore =  {}
+var CWBitcore = {}
+
+/**
+ *
+ * @param {bitcore.Script} script
+ * @returns {boolean}
+ */
+CWBitcore.isOutScript = function(script) {
+  return script.isPublicKeyOut() ||
+    script.isPublicKeyHashOut() ||
+    script.isMultisigOut() ||
+    script.isScriptHashOut() ||
+    script.isDataOut();
+}
 
 CWBitcore.isValidAddress = function(val) {
   try {
-    var address = new bitcore.Address(val);
-    if (address.isValid()) {
-      return address.version() == NETWORK.addressVersion;
-    } else {
-      return false;
-    }     
+    var p2pkh = bitcore.Address.isValid(val, NETWORK, bitcore.Address.Pay2PubKeyHash);
+    if (!p2pkh) {
+      var bech32 = bitcoinjs.address.fromBech32(val);
+
+      return typeof(bech32) !== 'undefined';
+    }
+
+    return p2pkh;
   } catch (err) {
     return false;
   }
 }
 
-CWBitcore.parseRawTransaction = function(txHex) {
-  checkArgType(txHex, "string");
-
-  var raw = new bitcore.Buffer(txHex, 'hex');
-  var tx = new bitcore.Transaction();
-  tx.parse(raw);
-  return tx;
-}
-
-CWBitcore.signRawTransaction = function(unsignedHex, cwPrivateKey) {
-  checkArgsType(arguments, ["string", "object"]);
-
-  var address = cwPrivateKey.getAddress();
-
-  // function used to each for each type
-  var fnToSign = {};
-  fnToSign[bitcore.Script.TX_PUBKEYHASH] = bitcore.TransactionBuilder.prototype._signPubKeyHash;
-  fnToSign[bitcore.Script.TX_PUBKEY]     = bitcore.TransactionBuilder.prototype._signPubKey;
-  fnToSign[bitcore.Script.TX_MULTISIG]   = bitcore.TransactionBuilder.prototype._signMultiSig;
-  fnToSign[bitcore.Script.TX_SCRIPTHASH] = bitcore.TransactionBuilder.prototype._signScriptHash;
-
-  // build key map
-  var wkMap = {};
-  wkMap[address] = new bitcore.WalletKey({network:NETWORK, privKey:cwPrivateKey.getBitcoreECKey()});
-
-  // unserialize raw transaction
-  var unsignedTx = CWBitcore.parseRawTransaction(unsignedHex);   
-
-  // prepare  signed transaction
-  var signedTx = new bitcore.TransactionBuilder();
-  //signedTx.tx = CWBitcore.prepareSignedTransaction(unsignedTx);
-  signedTx.tx = unsignedTx;
-
-  for (var i=0; i < unsignedTx.ins.length; i++) {
-      
-    // init parameters
-    var txin = unsignedTx.ins[i];
-    var scriptPubKey = new bitcore.Script(txin.s);
-    var input = {
-        address: address,
-        scriptPubKey: scriptPubKey,
-        scriptType: scriptPubKey.classify(),
-        i: i
-    };     
-    // generating hash for signature
-    var txSigHash = unsignedTx.hashForSignature(scriptPubKey, i, bitcore.Transaction.SIGHASH_ALL);
-    // empty the script
-    signedTx.tx.ins[i].s = bitcore.util.EMPTY_BUFFER;
-    // sign hash
-    var ret = fnToSign[input.scriptType].call(signedTx, wkMap, input, txSigHash);    
-    // inject signed script in transaction object
-    if (ret && ret.script) {
-      signedTx.tx.ins[i].s = ret.script;
-      if (ret.inputFullySigned) signedTx.inputsSigned++;
-      if (ret.signaturesAdded) signedTx.signaturesAdded += ret.signaturesAdded;
+CWBitcore.isValidMultisigAddress = function(val) {
+  try {
+    var addresses = val.split("_");
+    if (addresses.length != 4 && addresses.length != 5) {
+      return false;
     }
-
+    var required = parseInt(addresses.shift());
+    var provided = parseInt(addresses.pop());
+    if (isNaN(required) || isNaN(provided) || provided != addresses.length || required > provided || required < 1) {
+      return false;
+    }
+    for (var a = 0; a < addresses.length; a++) {
+      if (!CWBitcore.isValidAddress(addresses[a])) {
+        return false;
+      }
+    }
+    return true;
+  } catch (err) {
+    return false;
   }
-  return signedTx.tx.serialize().toString('hex');
 }
 
-CWBitcore.extractAddressFromTxOut = function(txout) {
-  checkArgType(txout, "object");
+CWBitcore.MultisigAddressToAddresses = function(val) {
 
-  var script = txout.getScript();
-  return bitcore.Address.fromScriptPubKey(script, NETWORK.name).toString();
+  if (CWBitcore.isValidAddress(val)) {
+    return [val];
+  } else if (CWBitcore.isValidMultisigAddress(val)) {
+    var addresses = val.split("_");
+    addresses.shift();
+    addresses.pop();
+
+    return addresses;
+  } else {
+    return [];
+  }
 }
 
+CWBitcore.genKeyMap = function(cwPrivateKeys) {
+  var wkMap = {};
+  cwPrivateKeys.forEach(function(cwPrivateKey) {
+    wkMap[cwPrivateKey.getAddress()] = cwPrivateKey.priv;
+  });
+
+  return wkMap;
+}
+
+/**
+ *
+ * @param {string} unsignedHex
+ * @param {CWPrivateKey} cwPrivateKey
+ * @param {boolean|function} [disableIsFullySigned]
+ * @param {function} cb
+ * @returns {*}
+ */
+CWBitcore.signRawTransaction = function(unsignedHex, cwPrivateKey, disableIsFullySigned, cb) {
+  // make disableIsFullySigned optional
+  if (typeof disableIsFullySigned === "function") {
+    cb = disableIsFullySigned;
+    disableIsFullySigned = null;
+  }
+  checkArgType(unsignedHex, "string");
+  checkArgType(cwPrivateKey, "object");
+  checkArgType(cb, "function");
+
+  try {
+    var tx = bitcore.Transaction(unsignedHex);
+
+    var keyMap = CWBitcore.genKeyMap([cwPrivateKey]);
+    var keyChain = [];
+
+    async.forEachOf(
+      tx.inputs,
+      function(input, idx, cb) {
+        (function(cb) {
+          var inputObj;
+
+          // dissect what was set as input script to use it as output script
+          var script = bitcore.Script(input._scriptBuffer.toString('hex'));
+          var multiSigInfo;
+          var addresses = [];
+
+          switch (script.classify()) {
+            case bitcore.Script.types.PUBKEY_OUT:
+              inputObj = input.toObject();
+              inputObj.output = bitcore.Transaction.Output({
+                script: input._scriptBuffer.toString('hex'),
+                satoshis: 0 // we don't know this value, setting 0 because otherwise it's going to cry about not being an INT
+              });
+              tx.inputs[idx] = new bitcore.Transaction.Input.PublicKey(inputObj);
+
+              addresses = [script.toAddress(NETWORK).toString()];
+
+              return cb(null, addresses);
+
+            case bitcore.Script.types.PUBKEYHASH_OUT:
+              inputObj = input.toObject();
+              inputObj.output = bitcore.Transaction.Output({
+                script: input._scriptBuffer.toString('hex'),
+                satoshis: 0 // we don't know this value, setting 0 because otherwise it's going to cry about not being an INT
+              });
+              tx.inputs[idx] = new bitcore.Transaction.Input.PublicKeyHash(inputObj);
+
+              addresses = [script.toAddress(NETWORK).toString()];
+
+              return cb(null, addresses);
+
+            case bitcore.Script.types.MULTISIG_IN:
+              inputObj = input.toObject();
+
+              return failoverAPI(
+                'get_script_pub_key',
+                {tx_hash: inputObj.prevTxId, vout_index: inputObj.outputIndex},
+                function(data) {
+                  inputObj.output = bitcore.Transaction.Output({
+                    script: data['scriptPubKey']['hex'],
+                    satoshis: bitcore.Unit.fromBTC(data['value']).toSatoshis()
+                  });
+
+                  multiSigInfo = CWBitcore.extractMultiSigInfoFromScript(inputObj.output.script);
+
+                  inputObj.signatures = bitcore.Transaction.Input.MultiSig.normalizeSignatures(
+                    tx,
+                    new bitcore.Transaction.Input.MultiSig(inputObj, multiSigInfo.publicKeys, multiSigInfo.threshold),
+                    idx,
+                    script.chunks.slice(1, script.chunks.length).map(function(s) { return s.buf; }),
+                    multiSigInfo.publicKeys
+                  );
+
+                  tx.inputs[idx] = new bitcore.Transaction.Input.MultiSig(inputObj, multiSigInfo.publicKeys, multiSigInfo.threshold);
+
+                  addresses = CWBitcore.extractMultiSigAddressesFromScript(inputObj.output.script);
+
+                  return cb(null, addresses);
+                }
+              );
+
+            case bitcore.Script.types.MULTISIG_OUT:
+              inputObj = input.toObject();
+              inputObj.output = bitcore.Transaction.Output({
+                script: input._scriptBuffer.toString('hex'),
+                satoshis: 0 // we don't know this value, setting 0 because otherwise it's going to cry about not being an INT
+              });
+
+              multiSigInfo = CWBitcore.extractMultiSigInfoFromScript(inputObj.output.script);
+              tx.inputs[idx] = new bitcore.Transaction.Input.MultiSig(inputObj, multiSigInfo.publicKeys, multiSigInfo.threshold);
+
+              addresses = CWBitcore.extractMultiSigAddressesFromScript(inputObj.output.script);
+
+              return cb(null, addresses);
+
+            case bitcore.Script.types.SCRIPTHASH_OUT:
+              // signing scripthash not supported, just skipping it, something external will have to deal with it
+              return cb();
+
+            case bitcore.Script.types.DATA_OUT:
+            case bitcore.Script.types.PUBKEY_IN:
+            case bitcore.Script.types.PUBKEYHASH_IN:
+            case bitcore.Script.types.SCRIPTHASH_IN:
+              // these are 'done', no reason to touch them!
+              return cb();
+
+            default:
+              return cb(new Error("Unknown scriptPubKey [" + script.classify() + "](" + script.toASM() + ")"));
+          }
+
+        })(function(err, addresses) {
+          if (err) {
+            return cb(err);
+          }
+
+          // NULL means it isn't neccesary to sign it
+          if (addresses === null) {
+            return cb();
+          }
+
+          // unique filter
+          addresses = addresses.filter(function(address, idx, self) {
+            return address && self.indexOf(address) === idx;
+          });
+
+          var _keyChain = addresses.map(function(address) {
+            return typeof keyMap[address] !== "undefined" ? keyMap[address] : null;
+          }).filter(function(key) {
+            return !!key
+          });
+
+          if (_keyChain.length === 0) {
+            throw new Error("Missing private key to sign input: " + idx);
+          }
+
+          keyChain = keyChain.concat(_keyChain);
+
+          cb();
+        });
+      },
+      function(err) {
+        if (err) {
+          // async.nextTick to avoid parent trycatch
+          return async.nextTick(function() {
+            cb(err);
+          });
+        }
+
+        // unique filter
+        keyChain = keyChain.filter(function(key, idx, self) {
+          return key && self.indexOf(key) === idx;
+        });
+
+        // sign with each key
+        keyChain.forEach(function(priv) {
+          tx.sign(priv);
+        });
+
+        // disable any checks that have anything to do with the values, because we don't know the values of the inputs
+        var opts = {
+          disableIsFullySigned: disableIsFullySigned,
+          disableSmallFees: true,
+          disableLargeFees: true,
+          disableDustOutputs: true,
+          disableMoreOutputThanInput: true
+        };
+
+        // async.nextTick to avoid parent trycatch
+        async.nextTick(function() {
+          cb(null, tx.serialize(opts));
+        });
+      }
+    );
+  } catch (err) {
+    // async.nextTick to avoid parent trycatch
+    async.nextTick(function() {
+      cb(err);
+    });
+  }
+};
+
+CWBitcore.extractMultiSigAddressesFromScript = function(script) {
+  checkArgType(script, "object");
+
+  if (!script.isMultisigOut()) {
+    return [];
+  }
+
+  var nKeysCount = bitcore.Opcode(script.chunks[script.chunks.length - 2].opcodenum).toNumber() - bitcore.Opcode.map.OP_1 + 1;
+  var pubKeys = script.chunks.slice(script.chunks.length - 2 - nKeysCount, script.chunks.length - 2);
+
+  return pubKeys.map(function(pubKey) {
+    // using custom code to pubKey->address instead of PublicKey.fromDER because pubKey isn't valid DER
+    return bitcore.Address(bitcore.crypto.Hash.sha256ripemd160(pubKey.buf), NETWORK, bitcore.Address.PayToPublicKeyHash).toString();
+    // return bitcore.Address.fromPublicKey(bitcore.PublicKey.fromDER(pubKey.buf, /* strict= */false)).toString();
+  });
+};
+
+CWBitcore.extractMultiSigInfoFromScript = function(script) {
+  checkArgType(script, "object");
+
+  if (!script.isMultisigOut()) {
+    return [];
+  }
+
+  var nKeysCount = bitcore.Opcode(script.chunks[script.chunks.length - 2].opcodenum).toNumber() - bitcore.Opcode.map.OP_1 + 1;
+  var threshold = bitcore.Opcode(script.chunks[script.chunks.length - nKeysCount - 2 - 1].opcodenum).toNumber() - bitcore.Opcode.map.OP_1 + 1;
+  return {
+    publicKeys: script.chunks.slice(script.chunks.length - 2 - nKeysCount, script.chunks.length - 2).map(function(pubKey) {
+      return bitcore.PublicKey(pubKey.buf);
+    }),
+    threshold: threshold
+  };
+};
+
+/**
+ * @param {bitcore.Transaction.Output} output
+ * @returns {string} either address or list of addresses (as CSV) or "" for op_return
+ */
+CWBitcore.extractAddressFromTxOut = function(output) {
+  checkArgType(output, "object");
+
+  switch (output.script.classify()) {
+    case bitcore.Script.types.PUBKEY_OUT:
+      return output.script.toAddress(NETWORK).toString();
+
+    case bitcore.Script.types.PUBKEYHASH_OUT:
+      return output.script.toAddress(NETWORK).toString();
+
+    case bitcore.Script.types.SCRIPTHASH_OUT:
+      return output.script.toAddress(NETWORK).toString();
+
+    case bitcore.Script.types.MULTISIG_OUT:
+      var addresses = CWBitcore.extractMultiSigAddressesFromScript(output.script);
+      return addresses.join(",");
+
+    case bitcore.Script.types.DATA_OUT:
+      return "";
+
+    default:
+      throw new Error("Unknown type [" + output.script.classify() + "]");
+  }
+}
+
+/**
+ * @param {string} source
+ * @param {string} txHex
+ * @returns {*}
+ */
 CWBitcore.extractChangeTxoutValue = function(source, txHex) {
   checkArgsType(arguments, ["string", "string"]);
 
-  // unserialize raw transaction
-  var tx = CWBitcore.parseRawTransaction(txHex);
+  var tx = bitcore.Transaction(txHex);
 
-  for (var i=0; i<tx.outs.length; i++) {
-      var address = CWBitcore.extractAddressFromTxOut(tx.outs[i]);
-      if (address == source) {
-          return tx.outs[i].getValue();
-      }
-  }
-  return 0;
+  return tx.outputs.map(function(output, idx) {
+    var address = CWBitcore.extractAddressFromTxOut(output);
+
+    if (address && address == source) {
+      return output.satoshis;
+    }
+
+    return 0;
+  }).reduce(function(value, change) { return change + value; });
 }
 
-// source: array with compressed and uncompressed address.
-// so we don't care how the used library parse the transaction.
-// TODO: check the pubkey instead
-CWBitcore.checkTransactionDest = function(txHex, source, dest) { 
+/**
+ * @TODO: check the pubkey instead
+ *
+ * @param {string}    txHex
+ * @param {string[]}  source  list of compressed and uncompressed addresses
+ * @param {string[]}  dest
+ * @returns {boolean}
+ */
+CWBitcore.checkTransactionDest = function(txHex, source, dest) {
   checkArgsType(arguments, ["string", "object", "object"]);
 
-  // unserialize raw transaction
-  var tx = CWBitcore.parseRawTransaction(txHex);    
-  for (var i=0; i<tx.outs.length; i++) {
-      var addresses = CWBitcore.extractAddressFromTxOut(tx.outs[i]).split(',');
-      var containsSource = _.intersection(addresses, source).length > 0;
-      var containsDest = _.intersection(addresses, dest).length > 0;
-      if (!containsSource && !containsDest) {
-        return false;
-      } else if (addresses.length>1) {
-        // if multisig we accept only value==MULTISIG_DUST_SIZE
-        if (tx.outs[i].getValue()>MULTISIG_DUST_SIZE) {
-          return false;
-        }
-      }
-  }
-  return true;
+  source = [].concat.apply([], source.map(function(source) {
+    return CWBitcore.MultisigAddressToAddresses(source);
+  }));
+  dest = [].concat.apply([], dest.map(function(dest) {
+    return CWBitcore.MultisigAddressToAddresses(dest);
+  }));
+
+  var tx = bitcore.Transaction(txHex);
+
+  var outputsValid = tx.outputs.map(function(output, idx) {
+    var address = null;
+
+    switch (output.script.classify()) {
+      case bitcore.Script.types.PUBKEY_OUT:
+        address = output.script.toAddress(NETWORK).toString();
+        break;
+
+      case bitcore.Script.types.PUBKEYHASH_OUT:
+        address = output.script.toAddress(NETWORK).toString();
+        break;
+
+      case bitcore.Script.types.SCRIPTHASH_OUT:
+        address = output.script.toAddress(NETWORK).toString();
+        break;
+
+      case bitcore.Script.types.MULTISIG_OUT:
+        var addresses = CWBitcore.extractMultiSigAddressesFromScript(output.script);
+
+        var isSource = dest.sort().join() == addresses.sort().join();
+        var isDest = source.sort().join() == addresses.sort().join();
+
+        // if multisig we only accept it if it's value indicates it's a data output (<= MULTISIG_DUST_SIZE or <= REGULAR_DUST_SIZE*2)
+        //  or a perfect match with the dest or source (change)
+        return output.satoshis <= Math.max(MULTISIG_DUST_SIZE, REGULAR_DUST_SIZE * 2) || isSource || isDest;
+
+      case bitcore.Script.types.DATA_OUT:
+        return true;
+
+      default:
+        throw new Error("Unknown type [" + output.script.classify() + "]");
+    }
+
+    var containsSource = _.intersection([address], source).length > 0;
+    var containsDest = _.intersection([address], dest).length > 0;
+
+    return containsDest || containsSource;
+  });
+
+  return outputsValid.filter(function(v) { return !v; }).length === 0;
 }
 
-CWBitcore.compareOutputs = function(source, txHexs) {
-  
-  var tx0 = CWBitcore.parseRawTransaction(txHexs[0]); 
+CWBitcore.compareOutputs = function(source, apiResponses) {
+  var t;
 
-  for (var t = 1; t < txHexs.length; t++) {
-    var tx1 = CWBitcore.parseRawTransaction(txHexs[t]); 
-    if (tx1.outs.length != tx0.outs.length) {
-      return false;
-    }
-    for (var i=0; i<tx0.outs.length; i++) {
-      var addresses0 = CWBitcore.extractAddressFromTxOut(tx0.outs[i]).split(',').sort().join(',');
-      var addresses1 = CWBitcore.extractAddressFromTxOut(tx1.outs[i]).split(',').sort().join(',');
-      var amount0 = tx0.outs[i].getValue();
-      var amount1 = tx1.outs[i].getValue();
+  // apiResponse might be a plain transaction hex
+  //   or it might be a container with transaction info
+  var responseIsTxInfo = (typeof apiResponses[0] == 'object')
+  var resolveTxHex = function(apiResponse) {
+    return (responseIsTxInfo ? apiResponse.tx_hex : apiResponse);
+  }
 
-      if (addresses0 != addresses1 || (addresses0.indexOf(source) == -1 && amount0 != amount1)) {
+  if (!responseIsTxInfo && apiResponses[0].indexOf("=====TXSIGCOLLECT") != -1) {
+    // armory transaction, we just compare if strings are the same.
+    for (t = 1; t < apiResponses.length; t++) {
+      if (apiResponses[t] != apiResponses[0]) {
         return false;
       }
     }
-  }
-  return true;
 
+    return true;
+  } else {
+    var tx0 = bitcore.Transaction(resolveTxHex(apiResponses[0]));
+
+    var txHexesValid = apiResponses.map(function(apiResponse, idx) {
+      if (idx === 0) {
+        return true;
+      }
+
+      var txHex = resolveTxHex(apiResponse);
+      var tx1 = bitcore.Transaction(txHex);
+
+      if (tx0.outputs.length != tx1.outputs.length) {
+        return false;
+      }
+
+      var outputsValid = tx0.outputs.map(function(output, idx) {
+        var addresses0 = CWBitcore.extractAddressFromTxOut(output).split(',').sort().join(',');
+        var addresses1 = CWBitcore.extractAddressFromTxOut(tx1.outputs[idx]).split(',').sort().join(',');
+        var amount0 = output.satoshis;
+        var amount1 = tx1.outputs[idx].satoshis;
+
+        // addresses need to be the same and values need to be the same
+        //  except for the change output
+        return addresses0 == addresses1 && (amount0 == amount1 || addresses0.indexOf(source) != -1);
+      });
+
+      return outputsValid.filter(function(v) { return !v; }).length === 0;
+    })
+
+    return txHexesValid.filter(function(v) { return !v; }).length === 0;
+  }
+}
+
+CWBitcore.pubKeyToPubKeyHash = function(pubKey) {
+  return bitcore.Address.fromPublicKey(bitcore.PublicKey(pubKey, {network: NETWORK}), NETWORK).toString();
 }
 
 CWBitcore.encrypt = function(message, password) {
@@ -367,3 +683,8 @@ CWBitcore.decrypt = function(cryptedMessage, password) {
   return CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(cryptedMessage, password));
 }
 
+CWBitcore.getQuickUrl = function(passphrase, password) {
+  var url = location.protocol + '//' + location.hostname + '/#cp=';
+  url += CWBitcore.encrypt(passphrase, password);
+  return url;
+}

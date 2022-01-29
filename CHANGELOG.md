@@ -1,4 +1,93 @@
-### v1.4.0 (Unreleased) ###
+### v1.8.0 ###
+**Release Date:** June 26, 2016 
+
+**Enhancements:**
+- Docker image builds
+- Eliminate socket.io feed code (which was causing issues/not working), replace with simple polling
+
+**Fixes:**
+- Fix exchange market display -- is now sortable (#768)
+- UI tweaks (#780)
+- Disable portfolio and leaderboard, clean up menu interface
+- Update bitcore to newest
+- Fix date field on broadcast modal (#779)
+- Remove asset description limit
+- Fix DEX buy/sell validation error messages (#746)
+- Better error handling (pops up an error dialog when many times before it would just error to console)
+- Pull up to 5000 history entries instead of 100 (fixes #565)
+- Fix minor display issues with issuances (#551, #427)
+
+### v1.7.0 ###
+**Release Date:** January 24, 2016 
+
+**Enhancements:**
+- Update to work with newest `bitcore` and enforced high S signatures (@rubensayshi)
+- Extensive code cleanup/reformatting (@rubensayshi)
+- Added basic Travis and CircleCI test suite
+
+**Removed features:**
+- Remove use of `counterwebdeps` external repo.
+
+**Fixes:**
+- Fixed improper disabled textarea on Firefox in signing raw transactions dialog
+
+### v1.6.3 ###
+**Enhancements:**
+- Allow `OP_RETURN`; use`'auto'` encoding
+
+**Removed features:**
+- Chat
+
+**Fixes:**
+- Fix `refreshCounterpartyBalances()`
+- Fix pending message for issuance with quantity=0
+
+### v1.6.2 ###
+**Fixes:**
+- Proper formatting for multisig addresses on history page and stats page
+- Updated terminology in several parts of the UI
+- Updated blockscan links in the history page and stats page
+- Blockscan links now work with testnet
+- A few other minor changes
+
+### v1.6.1 ###
+**Fixes:**
+* Bug fixes: http://goo.gl/uj5mcQ
+
+### v1.6.0 ###
+**Enhancements:**
+- Full multisig support
+- Free numeric asset and dividend fee support
+- Better internationalization
+- Make Counterwallet possible to package in Linux
+
+**Removed features:**
+- BTC Trading
+- Callback
+- RPS
+
+**Fixes:**
+* Numerous fixes: http://goo.gl/JUPoBp
+* Minor UI tweaks
+
+Full list of changes are at: http://goo.gl/V3y29V
+
+### v1.5.0 ###
+**Enhancements:**
+* Added Quick Buy interface with Vennd Machine
+* Added internationalization support
+* New address generation system
+* DEX design improvement
+* Added order expiration and fees in advanced option
+* Added quick url access with choosen password
+
+**Fixes:**
+* Numerous fixes: http://goo.gl/opzkoh
+* Minor UI tweaks
+
+Full list of changes are at: http://goo.gl/AICdol
+
+### v1.4.0 ###
 **Enhancements:**
 * Added new DEx interface
 * Added Armory Offline signing support
@@ -14,7 +103,7 @@
 * Added Rock-Paper-Scissors
 * Added Zeroconf support (show pending balances for assets)
 * Added IP-based blocking for betting, RPS and dividend issuance. We are currently blocking people
-  with US-based IP addresses from using these features on counterwallet.co itself.
+  with US-based IP addresses from using these features on counterwallet.io itself.
 
 **Fixes:**
 * Fixed issue with asset name validation (length checking was incorrect)

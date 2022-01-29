@@ -1,16 +1,19 @@
-
 function normalizeQuantity(quantity, divisible) {
   //Converts from satoshi (int) to float (decimal form)
-  if(typeof(divisible)==='undefined') divisible = true;
+  if (typeof(divisible) === 'undefined') divisible = true;
   return divisible && quantity !== 0 ? Decimal.round(new Decimal(quantity).div(UNIT), 8, Decimal.MidpointRounding.ToEven).toFloat() : parseInt(quantity);
   //^ we have the quantity !== 0 check due to a bug in Decimal (https://github.com/hiroshi-manabe/JSDecimal/issues/2)
 }
 
 function denormalizeQuantity(quantity, divisible) {
   //Converts from float (decimal form) to satoshi (int) 
-  if(typeof(divisible)==='undefined') divisible = true;
+  if (typeof(divisible) === 'undefined') divisible = true;
   return divisible && quantity !== 0 ? Decimal.round(new Decimal(quantity).mul(UNIT), 8, Decimal.MidpointRounding.ToEven).toFloat() : parseInt(quantity);
   //^ we have the quantity !== 0 check due to a bug in Decimal (https://github.com/hiroshi-manabe/JSDecimal/issues/2)
+}
+
+function roundAmount(amount) {
+  return Decimal.round(new Decimal(amount), 8, Decimal.MidpointRounding.ToEven).toString();
 }
 
 function addFloat(floatA, floatB) {
@@ -37,44 +40,51 @@ function divFloat(floatA, floatB) {
 
 function hashToB64(content) {
   //used for storing address alias data, for instance
-  return CryptoJS.SHA256(content).toString(CryptoJS.enc.Base64); 
+  return CryptoJS.SHA256(content).toString(CryptoJS.enc.Base64);
 }
 
 function smartFormat(num, truncateDecimalPlacesAtMin, truncateDecimalPlacesTo) { //arbitrary rules to make quantities formatted a bit more friendly
-  if(num === null || isNaN(num)) return '??';
-  if(num === 0) return num; //avoid Decimal class issue dealing with 0
-  if(typeof(truncateDecimalPlacesMin)==='undefined' || truncateDecimalPlacesMin === null) truncateDecimalPlacesMin = null;
-  if(typeof(truncateDecimalPlacesTo)==='undefined') truncateDecimalPlacesTo = 4;
-  if(truncateDecimalPlacesAtMin === null || num > truncateDecimalPlacesAtMin) {
+  if (num === null || isNaN(num)) return '??';
+  if (num === 0) return num; //avoid Decimal class issue dealing with 0
+  if (typeof(truncateDecimalPlacesAtMin) === 'undefined' || truncateDecimalPlacesAtMin === null) truncateDecimalPlacesAtMin = null;
+  if (typeof(truncateDecimalPlacesTo) === 'undefined') truncateDecimalPlacesTo = 4;
+  if (truncateDecimalPlacesAtMin === null || num > truncateDecimalPlacesAtMin) {
     num = Decimal.round(new Decimal(num), truncateDecimalPlacesTo, Decimal.MidpointRounding.ToEven).toFloat();
   }
   return numberWithCommas(noExponents(num));
 }
 
-//TODO: refactor with a "currencies" list in conf
+function formatFiat(num) {
+  if (num === null || isNaN(num)) return '??';
+
+  return num.toFixed(2).replace(/./g, function(c, i, a) {
+      return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+  });
+}
+
 function assetsToAssetPair(asset1, asset2) {
   //NOTE: This MUST use the same logic/rules as counterblockd's assets_to_asset_pair() function in lib/util.py
   var base = null;
   var quote = null;
-  
-  if(asset1 == 'BTC' || asset2 == 'BTC') {
-      base = asset1 == 'BTC' ? asset2 : asset1;
-      quote = asset1 == 'BTC' ? asset1 : asset2;
-  } else if(asset1 == 'XBTC' || asset2 == 'XBTC') {
-      base = asset1 == 'XBTC' ? asset2 : asset1;
-      quote = asset1 == 'XBTC' ? asset1 : asset2;
-  } else if(asset1 == 'XCP' || asset2 == 'XCP') {
-      base = asset1 == 'XCP' ? asset2 : asset1;
-      quote = asset1 == 'XCP' ? asset1 : asset2;
-  } else  {
-      base = asset1 < asset2 ? asset1 : asset2;
-      quote = asset1 < asset2 ? asset2 : asset1;
+
+  for (var i in QUOTE_ASSETS) {
+    if (asset1 == QUOTE_ASSETS[i] || asset2 == QUOTE_ASSETS[i]) {
+      base = asset1 == QUOTE_ASSETS[i] ? asset2 : asset1;
+      quote = asset1 == QUOTE_ASSETS[i] ? asset1 : asset2;
+      break;
+    }
   }
+
+  if (!base) {
+    base = asset1 < asset2 ? asset1 : asset2;
+    quote = asset1 < asset2 ? asset2 : asset1;
+  }
+
   return [base, quote];
 }
 
 function makeQRCode(addr) {
-  $.jqlog.debug('Generate Qrcode: '+addr);
+  $.jqlog.debug('Generate Qrcode: ' + addr);
 
   addr = addr.replace(/^[\s\u3000]+|[\s\u3000]+$/g, '');
 
@@ -82,51 +92,7 @@ function makeQRCode(addr) {
   qr.addData(addr);
   qr.make();
 
-  return qr.createImgTag(4);  
-}
-
-function getLinkForCPData(type, dataID, dataTitle, htmlize) {
-  if(typeof(dataTitle)==='undefined' || dataTitle === null) dataTitle = dataID;
-  if(typeof(htmlize)==='undefined' || htmlize === null) htmlize = true;
-  if(typeof(type)==='undefined') type = 'tx';
-  var url = null;
-  if(type == 'address') { //dataID is an address
-    url = "http://blockscan.com/address.aspx?q=" + dataID;
-  } else if(type == 'order') { //txID is an order ID
-    url = "http://blockscan.com/order.aspx?q=" + dataID;
-  } else if(type == 'tx') { //generic TX
-    url = "http://blockscan.com/tx.aspx?q=" + dataID;
-  } else {
-    assert(false, "Unknown type of " + type);
-  }
-  if(USE_TESTNET) {
-    return dataTitle ? dataTitle : dataID; //blockscan not for testnet currently
-  } else {
-    return htmlize ? ('<a href="' + url + '" target="_blank">' + dataTitle + '</a>') : url;  
-  }
-}
-
-function getTxHashLink(hash) {
-  // TODO: add link to blockscan when possible
-  var shortHash = hash.substr(hash.length-5);
-  if (hash.length == 128) {
-    shortHash += '...' + hash.substr(64, 5);
-  }
-  var link = '<span rel="tooltip" title="'+hash+'" data-placement="top" data-container="body" class="shortHash">'+shortHash+'</span>';
-
-  return link;
-}
-
-function getLinkForBlock(blockIndex, dataTitle, htmlize) {
-  if(typeof(dataTitle)==='undefined' || dataTitle === null) dataTitle = blockIndex;
-  if(typeof(htmlize)==='undefined' || htmlize === null) htmlize = true;
-  var url = BLOCKEXPLORER_URL + '/block-index/' + blockIndex;
-  return htmlize ? '<a href="' + url + '" target="_blank">' + dataTitle + '</a>' : url;
-}
-
-function getAddressLabel(address) {
-  //gets the address label if the address is in this wallet
-  return PREFERENCES['address_aliases'][hashToB64(address)] || address;
+  return qr.createImgTag(4);
 }
 
 function testnetBurnDetermineEarned(blockHeight, burned) {
