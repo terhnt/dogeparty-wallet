@@ -4,7 +4,7 @@ MAINTAINER Unoparty Developers <dev@unoparty.io>
 
 # install additional deps
 RUN apt-get update && apt-get upgrade -y && apt-get update
-RUN apt-get -y install sudo curl git ssl-cert wget make libpcre3-dev libxslt1-dev libgeoip-dev unzip zip build-essential libssl-dev libxslt1.1 libgeoip1 geoip-database libpcre3 libgd-dev
+RUN apt-get -y install sudo curl git ssl-cert wget gettext make libpcre3-dev libxslt1-dev libgeoip-dev unzip zip build-essential libssl-dev libxslt1.1 libgeoip1 geoip-database libpcre3 libgd-dev
 
 # install nginx
 ENV OPENRESTY_VER="1.19.9.1"
