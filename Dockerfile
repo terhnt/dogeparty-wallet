@@ -1,13 +1,13 @@
 FROM ubuntu:18.04
 
-MAINTAINER Counterparty Developers <dev@counterparty.io>
+MAINTAINER Unoparty Developers <dev@unoparty.io>
 
 # install additional deps
 RUN apt-get update && apt-get upgrade -y && apt-get update
-RUN apt-get -y install ssl-cert make libpcre3-dev libxslt1-dev libgeoip-dev unzip zip build-essential libssl-dev libxslt1.1 libgeoip1 geoip-database libpcre3 libgd2-xpm-dev
+RUN apt-get -y install sudo curl git ssl-cert wget make libpcre3-dev libxslt1-dev libgeoip-dev unzip zip build-essential libssl-dev libxslt1.1 libgeoip1 geoip-database libpcre3 libgd-dev
 
 # install nginx
-ENV OPENRESTY_VER="1.9.7.4"
+ENV OPENRESTY_VER="1.19.9.1"
 RUN wget -O /tmp/nginx-openresty.tar.gz http://openresty.org/download/openresty-${OPENRESTY_VER}.tar.gz
 RUN mkdir -p /tmp/ngx_openresty-${OPENRESTY_VER} && tar xfzv /tmp/nginx-openresty.tar.gz -C /tmp/ngx_openresty-${OPENRESTY_VER} --strip-components 1
 RUN cd /tmp/ngx_openresty-${OPENRESTY_VER} && ./configure \
@@ -63,7 +63,7 @@ RUN mkdir -p /unoblock_data/asset_img /unoblock_data/asset_img.testnet
 # Install newest stable nodejs
 # (the `nodejs` package includes `npm`)
 RUN apt-get update && apt-get -y remove nodejs npm gyp
-RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+RUN curl -sL https://deb.nodesource.com/setup_17.x | sudo -E bash -
 RUN apt-get update && apt-get -y install nodejs
 
 # Add transifex auth data if available
@@ -77,7 +77,7 @@ RUN if [ -n "$TRANSIFEX_USER" ] && [ -n "$TRANSIFEX_PASSWORD" ]; then echo "$TRA
 RUN npm config set strict-ssl false
 ENV PHANTOMJS_CDNURL="https://bitbucket.org/ariya/phantomjs/downloads/"
 RUN npm install -g bower grunt browserify uglify-es
-RUN npm install --unsafe-perm -g mocha-phantomjs
+RUN npm install --unsafe-perm -g mocha-phantomjs-core
 
 # Install project
 COPY . /unowallet
