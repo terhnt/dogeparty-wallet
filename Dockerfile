@@ -1,4 +1,4 @@
-FROM counterparty/base
+FROM ubuntu:18.04
 
 MAINTAINER Counterparty Developers <dev@counterparty.io>
 
@@ -75,7 +75,7 @@ RUN if [ -n "$TRANSIFEX_USER" ] && [ -n "$TRANSIFEX_PASSWORD" ]; then echo "$TRA
 
 # Global stuff moved here to speed up build times just for code changes
 RUN npm config set strict-ssl false
-ENV PHANTOMJS_CDNURL="http://cnpmjs.org/downloads"
+ENV PHANTOMJS_CDNURL="https://bitbucket.org/ariya/phantomjs/downloads/"
 RUN npm install -g bower grunt browserify uglify-es
 RUN npm install --unsafe-perm -g mocha-phantomjs
 
