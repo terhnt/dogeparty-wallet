@@ -2,7 +2,7 @@
 [![Build Status Circle](https://circleci.com/gh/terhnt/unowallet.svg?&style=shield)](https://circleci.com/gh/terhnt/unowallet)
 [![Slack Status](http://slack.counterparty.io/badge.svg)](http://slack.counterparty.io)
 
-Counterwallet
+Unowallet
 ================
 
 Online Webwallet for [Counterparty](http://www.counterparty.io).
@@ -84,7 +84,7 @@ grunt freeze
 3. Run `grunt build` to download translations
 4. Add the languages you want to support to `AVAILABLE_LANGUAGES` in **unowallet.conf.json** - you can use **unowallet.conf.json.example** as a template. The template file contains **only** the setting relevant to languages and does not replace the rest of variables required in that file (refer to Federeated Node documentation for additional details about `unowallet.conf`).
 
-Setting up your own Counterwallet Server
+Setting up your own Unowallet Server
 -----------------------------------------
 
 See [this link](http://counterparty.io/docs/federated_node/) for more info.
@@ -92,10 +92,10 @@ See [this link](http://counterparty.io/docs/federated_node/) for more info.
 Development
 -----------
 
-The easiest way to develop locally is to install Federated Node in Docker environment. If you already have Bitcoin Core addrindex, Counterparty Server and Counterblock, then Counterwallet can be manually installed using either of these approaches:
+The easiest way to develop locally is to install Federated Node in Docker environment. If you already have Unobtanium Core addrindex, Unoparty Server and Unoblock, then Unowallet can be manually installed using either of these approaches:
 
-* Stand-alone Docker environment: refer to docker\start.sh in the Counterwallet source code.
-* Manually: example based on the Docker template for Counterwallet on Ubuntu 16.04 is provided below.
+* Stand-alone Docker environment: refer to docker\start.sh in the Unowallet source code.
+* Manually: example based on the Docker template for Unowallet on Ubuntu 16.04 is provided below.
 
 ### Manual installation in local environment (Ubuntu 16.04):
 1. Clone repository and `cd` into result folder
@@ -115,7 +115,7 @@ sudo apt-get install -y nodejs
 
 * the `--dontcheckdeps` speeds up the process and avoids having to do `grunt freeze` everytime you make a change to a dependency during development
 * If you want to test your local version on another device (or let another person test something) use https://ngrok.com to setup a tunnel to your local environment
-* If you want to use HTTPS, refer to additional steps required in the Counterwallet Docker start script
+* If you want to use HTTPS, refer to additional steps required in the Unowallet Docker start script
 
 ### Note concerning `npm install`
 `npm install` triggers a `prepublish` which is configured to do `grunt build`

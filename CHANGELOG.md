@@ -1,5 +1,5 @@
 ### v1.8.0 ###
-**Release Date:** June 26, 2016 
+**Release Date:** June 26, 2016
 
 **Enhancements:**
 - Docker image builds
@@ -18,7 +18,7 @@
 - Fix minor display issues with issuances (#551, #427)
 
 ### v1.7.0 ###
-**Release Date:** January 24, 2016 
+**Release Date:** January 24, 2016
 
 **Enhancements:**
 - Update to work with newest `bitcore` and enforced high S signatures (@rubensayshi)
@@ -59,7 +59,7 @@
 - Full multisig support
 - Free numeric asset and dividend fee support
 - Better internationalization
-- Make Counterwallet possible to package in Linux
+- Make Unowallet possible to package in Linux
 
 **Removed features:**
 - BTC Trading
@@ -94,7 +94,7 @@ Full list of changes are at: http://goo.gl/AICdol
 * Added page-level help for balances and exchanges (with more coming in the future, as necessary)
 
 **Fixes:**
-* Significant performance and reliability improvements (on the counterblockd side)
+* Significant performance and reliability improvements (on the unoblockd side)
 * Numerous minor fixes
 * Minor UI tweaks
 
@@ -142,14 +142,14 @@ Full list of changes are at: http://goo.gl/AICdol
 ### v1.1.5 ###
 **Enhancements:**
 * moved to using the bitcore library
-    
+
 **Fixes:**
 * numerous minor fixes
 
 ### v1.1.4 ###
 **Enhancements:**
 * added stats page
-    
+
 **Fixes:**
 * ignore dust with orders
 * open orders in the open order box should decrease properly as they are matched
@@ -176,7 +176,7 @@ Full list of changes are at: http://goo.gl/AICdol
 * added 7 sample moving average to price charts
 * show # characters remaining when typing asset description
 * we now wait 6 blocks on an order match before doing a BTCpay (we do this for protection against a reorg making an order match disappear)
-    
+
 **Fixes:**
 * open trades show properly in non-BTC pairs (thanks rotalumis for pointing this out)
 * debugging info now shows block number and last message ID properly, as well as backend API URL list
@@ -193,7 +193,7 @@ Full list of changes are at: http://goo.gl/AICdol
 * if a user is banned from chat, they shouldn't be able to /msg others
 * tweaks and fixes to work with newest counterpartyd changes (e.g. working with new 'open' order status)
 * we now filter out negative fee_required_remaining and fee_provided_remaining value items
-    
+
 ### v0.9.4 ###
 **Enhancements:**
 * when wanting to do a trade where BTC we will purchased (i.e. a btcpay is required), show the online status of unowallet users (as available) with trades appearing that offer to sell BTC. this is important because BTCpays must complete in a certain (shortish) period of time, and trading with a user that is marked online has a higher percentage chance of fully going through. online status is tracked by the server in an anonymous fashion (i.e. using the walletID identifier). Note that this change does not work with old trade (it will only work with trades that are made *after* this update is put into place)
@@ -225,13 +225,13 @@ Full list of changes are at: http://goo.gl/AICdol
 ### v0.9.2 ###
 **Enhancements:**
 * added the ASSET LEADERBOARD functionality, which shows the top 100 counterparty assets (that have actual trade data)* asset market info is now pre-compiled (i.e. calculated and stored) every 10 minutes, due to the addition of the asset leaderboard* added notification pane messages for bets and broadcasts
-* servers store chat history now in database, and added get_chat_history() call. 
+* servers store chat history now in database, and added get_chat_history() call.
 * because of the above, chat history persists between server restarts (so you still get the newest line even if the unowalletd service needs to be restarted)
 * fixed up and enhanced the Asset Portfolio page
 
 **Fixes:**
 * modified address creation button to be more clear (people were missing the create watch address option as it was a combo button)
-* buy/sell: order book display changed to percentages based adaptive display instead of absolute fee based (i.e. works as it should now :) 
+* buy/sell: order book display changed to percentages based adaptive display instead of absolute fee based (i.e. works as it should now :)
 * chat handle completion on tab is now case insensitive
 * choosing your handle when starting a chat for the first time now will tell you if the handle is in use or not
 * fixes for nginx "crash" situation, fix correctly closing unused sockets in unowalletd in one or two places

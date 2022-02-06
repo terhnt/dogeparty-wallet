@@ -218,7 +218,7 @@ var RESTRICTED_AREA_MESSAGE = {
 }
 
 var MAX_SUPPORT_CASE_PROBLEM_LEN = 4096;
-var QUOTE_ASSETS = []; // initalized with counterblock is_ready()
+var QUOTE_ASSETS = []; // initalized with unoblock is_ready()
 
 var QUICK_BUY_ENABLE = false;
 var BETTING_ENABLE = true;
@@ -276,28 +276,28 @@ bitcoinjs.networks.regtest = {
     wif: 0x80
   }
 
-  bitcoinjs.networks.testnet = {
-      messagePrefix: '\x1bUnobtanium Signed Message:\n',
-      bech32: 'uctn',
-      bip32: {
-        public: 0x043586CE,
-        private: 0x04358293
-      },
-      pubKeyHash: 0x44, //68
-      scriptHash: 0x1E, //30
-      wif: 0xEF //239
-    }
+bitcoinjs.networks.testnet = {
+    messagePrefix: '\x1bUnobtanium Signed Message:\n',
+    bech32: 'uctn',
+    bip32: {
+      public: 0x043586CE,
+      private: 0x04358293
+    },
+    pubKeyHash: 0x44, //68
+    scriptHash: 0x1E, //30
+    wif: 0xEF //239
+  }
 
-    bitcoinjs.networks.mainnet = {
-        messagePrefix: '\x1bUnobtanium Signed Message:\n',
-        bech32: 'ucmn',
-        bip32: {
-          public: 0x0488B21E,
-          private: 0x0488ADE4
-        },
-        pubKeyHash: 0x82, //130
-        scriptHash: 0x1E, //30
-        wif: 0xE0 //224
-      }
+  bitcoinjs.networks.mainnet = {
+      messagePrefix: '\x1bUnobtanium Signed Message:\n',
+      bech32: 'ucmn',
+      bip32: {
+        public: 0x0488B21E,
+        private: 0x0488ADE4
+      },
+      pubKeyHash: 0x82, //130
+      scriptHash: 0x1E, //30
+      wif: 0xE0 //224
+    }
 
 //bitcoinjs.networks.mainnet = bitcoinjs.networks.bitcoin // support for bitcore's name

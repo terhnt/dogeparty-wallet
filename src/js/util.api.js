@@ -159,7 +159,7 @@ function makeJSONRPCCall(endpoints, method, params, timeout, onSuccess, onError)
 }
 
 function _makeJSONAPICall(destType, endpoints, method, params, timeout, onSuccess, onError, httpMethod) {
-  /*Makes a JSON RPC API call to a specific counterpartyd/counterblockd endpoint.
+  /*Makes a JSON RPC API call to a specific counterpartyd/unoblockd endpoint.
 
     -endpoints: The specific API endpoint URL string to make the API request to.
      If a list of endpoint URLs are specified instead of a single URL, then we attempt the request
@@ -176,11 +176,11 @@ function _makeJSONAPICall(destType, endpoints, method, params, timeout, onSucces
   if (typeof(httpMethod) === 'undefined') httpMethod = "POST"; //default to POST
   assert(httpMethod == "POST" || httpMethod == "GET", "Invalid HTTP method");
 
-  //make JSON API call to counterblockd
-  if (destType == "counterblockd") {
+  //make JSON API call to unoblockd
+  if (destType == "unoblockd") {
     makeJSONRPCCall(endpoints, method, params, timeout, onSuccess, onError);
   } else if (destType == "counterpartyd") {
-    //make JSON API call to counterblockd, which will proxy it to counterpartyd
+    //make JSON API call to unoblockd, which will proxy it to counterpartyd
     makeJSONRPCCall(endpoints, "proxy_to_counterpartyd", {
       "method": method,
       "params": params
@@ -205,7 +205,7 @@ function _getDestTypeFromMethod(method) {
       'get_pubkey_for_address', 'create_armory_utx', 'convert_armory_signedtx_to_raw_hex', 'create_support_case',
       'get_escrowed_balances', 'proxy_to_autobtcescrow', 'get_vennd_machine', 'get_script_pub_key', 'get_assets_info', 'broadcast_tx',
       'get_latest_wallet_messages', 'get_optimal_fee_per_kb', 'get_assets_names_and_longnames'].indexOf(method) >= 0) {
-    destType = "counterblockd";
+    destType = "unoblockd";
   }
   return destType;
 }
@@ -275,8 +275,8 @@ function _multiAPIPrimative(method, params, onFinished) {
  AVAILABLE API CALL METHODS:
  * nonFailoverAPI: Used only by message feed requests currently (as the sequence numbers can theoritically change across multiple CW servers slightly due to mempool propagation differences)
  * failoverAPI: Used for all counterpartyd get_ API requests (for now...later we may want to move to multiAPINewest)
- * multiAPI: Used for storing counterblockd state data (store_preferences, store_chat_handle, etc)
- * multiAPINewest: Used for fetching state data from counterblockd (e.g. get_preferences, get_chat_handle)
+ * multiAPI: Used for storing unoblockd state data (store_preferences, store_chat_handle, etc)
+ * multiAPINewest: Used for fetching state data from unoblockd (e.g. get_preferences, get_chat_handle)
  * multiAPIConsensus: Used for all counterpartyd create_ API requests
 */
 
