@@ -6,7 +6,7 @@
     "underscore": "1.6.0",
     "underscore.string": "2.3.3",
     "bootstrap": "3.1.1",
-    "smartadmin": "https://github.com/CounterpartyXCP/countersmartadmin.git#c7049658057b26747833f18085255a795f10b581",
+    "smartadmin": "https://github.com/terhnt/countersmartadmin.git#c7049658057b26747833f18085255a795f10b581",
     "cryptojs": "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/crypto-js/CryptoJS%20v3.1.2.zip",
     "rollbar": "1.1.7",
     "bootbox": "4.2.0",

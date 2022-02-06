@@ -185,7 +185,7 @@ var LEVERAGE_UNIT = 5040;
 var MAINNET_UNSPENDABLE = 'uNopartyXburnXXXXXXXXXXXXXXXWJmsqn';
 var TESTNET_UNSPENDABLE = 'UUnoPartyXburnTestnetXXXXXXXXFEeN4';
 var REGTEST_UNSPENDABLE = '1UnopartyxBurnxAddrXXXXXXXXXX42dPh';
-var TESTNET_BURN_START = 5967;
+var TESTNET_BURN_START = 700;
 var TESTNET_BURN_END = 400000;
 var REGTEST_BURN_START = 101;
 var REGTEST_BURN_END = 150000000;
@@ -218,7 +218,7 @@ var RESTRICTED_AREA_MESSAGE = {
 }
 
 var MAX_SUPPORT_CASE_PROBLEM_LEN = 4096;
-var QUOTE_ASSETS = []; // initalized with counterblock is_ready()
+var QUOTE_ASSETS = []; // initalized with unoblock is_ready()
 
 var QUICK_BUY_ENABLE = false;
 var BETTING_ENABLE = true;

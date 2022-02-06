@@ -3,7 +3,7 @@ Counterblock = {};
 Counterblock.getBalances = function(addresses, cwkeys, callback) {
 
   WALLET.retrieveBTCAddrsInfo(addresses, function(btcData) {
-    $.jqlog.debug('Updating normalized balances for a single addresses at counterblock ' + addresses)
+    $.jqlog.debug('Updating normalized balances for a single addresses at unoblock ' + addresses)
     failoverAPI("get_normalized_balances", {'addresses': addresses}, function(assetsData, endpoint) {
       var data = {};
       // extracts all asset except BTC
