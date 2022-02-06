@@ -94,7 +94,7 @@ Full list of changes are at: http://goo.gl/AICdol
 * Added page-level help for balances and exchanges (with more coming in the future, as necessary)
 
 **Fixes:**
-* Significant performance and reliability improvements (on the counterblockd side)
+* Significant performance and reliability improvements (on the unoblockd side)
 * Numerous minor fixes
 * Minor UI tweaks
 

@@ -399,7 +399,7 @@ function WalletViewModel() {
             assets.push(balancesData[i]['asset']);
           }
         }
-        // TODO: optimize: assets infos already fetched in get_normalized_balances() in counterblockd
+        // TODO: optimize: assets infos already fetched in get_normalized_balances() in unoblockd
         failoverAPI("get_escrowed_balances", {'addresses': addresses}, function(escrowedBalances) {
 
           // add asset with all fund escrowed
