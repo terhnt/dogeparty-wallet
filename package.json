@@ -24,7 +24,7 @@
     "grunt-chrome-compile": "0.2.2",
     "grunt-contrib-copy": "0.4.x",
     "grunt-usemin": "2.1.x",
-    "mocha-phantomjs": "4.x",
+    "mocha-phantomjs": "2.1.x",
     "serve": "^6.5.3",
     "uglify-js": "1.3.5"
   },
@@ -34,7 +34,7 @@
     "build": "grunt build --dontcheckdeps && cd ./src && bower --allow-root --config.interactive=false update",
     "dev": "grunt build --dontcheckdeps --dontminify",
     "q": "grunt build --dontcheckdeps",
-    "test": "./node_modules/mocha-phantomjs/bin/mocha-phantomjs test/test.html --ignore-ssl-errors=true --ignore-resource-errors --ssl-protocol=any # phantomjs has issues with unowallet.io SSL cert"
+    "test": "./node_modules/mocha-phantomjs-core/mocha-phantomjs-core test/test.html --ignore-ssl-errors=true --ignore-resource-errors --ssl-protocol=any # phantomjs has issues with unowallet.io SSL cert"
   },
   "engine": "node >= 0.10"
 }
