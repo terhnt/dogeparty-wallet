@@ -3,8 +3,40 @@
 var bitcore = require('bitcore-lib');
 var bitcoreMessage = require('bitcore-message'); // this also binds itself to bitcore.Message as soon as it's require'd
 
+bitcore.Networks.unomainnet = bitcore.Networks.add({
+  name: 'unolivenet',
+  alias: 'unomainnet',
+  pubkeyhash: 0x82,
+  privatekey: 0xE0,
+  scripthash: 0x1E,
+  xpubkey: 0x0488B21E,
+  xprivkey: 0x0488ADE4,
+  networkMagic: 0x03d5b503,
+  port: 65535,
+  dnsSeeds: [
+    'node1.unobtanium.uno',
+    'node2.unobtanium.uno'
+  ]
+});
+// Dogecoin Testnet
+bitcore.Networks.unotestnet = bitcore.Networks.add({
+  name: 'unotestnet',
+  alias: 'unotest',
+  pubkeyhash: 0x44,
+  privatekey: 0xEF,
+  scripthash: 0x1E,
+  xpubkey: 0x043586CE,
+  xprivkey: 0x04358293,
+  networkMagic: 0x01020304,
+  port: 65531,
+  dnsSeeds: [
+    'testnet.unoparty.io',
+    'testnet.unobtanium.uno'
+  ]
+});
+
 // this 'global' is overwritten by tests!
-var NETWORK = (USE_TESTNET || USE_REGTEST) ? bitcore.Networks.testnet : bitcore.Networks.livenet;
+var NETWORK = (USE_TESTNET || USE_REGTEST) ? 'unotestnet' : 'unolivenet';
 
 var CWHierarchicalKey = function(passphrase, password) {
   checkArgType(passphrase, "string");
