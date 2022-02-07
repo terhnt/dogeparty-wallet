@@ -29,7 +29,7 @@ function WalletViewModel() {
   }
 
   self.networkBlockHeight.subscribe(function(newBlockIndex) {
-    self.isSegwitEnabled = newBlockIndex >= 557236 // should be synced up to "segwit_support" entry from counterparty-lib/counterpartylib/protocol_changes.json
+    self.isSegwitEnabled = false // newBlockIndex >= 557236 // should be synced up to "segwit_support" entry from counterparty-lib/counterpartylib/protocol_changes.json
 
     updateSegwitGenerationVisibility()
 
