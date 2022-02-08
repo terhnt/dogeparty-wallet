@@ -191,7 +191,7 @@ Full list of changes are at: http://goo.gl/AICdol
 * use anonymous knockout validation rules where possible
 * empty XCP balance should show as '0' instead of '??'
 * if a user is banned from chat, they shouldn't be able to /msg others
-* tweaks and fixes to work with newest counterpartyd changes (e.g. working with new 'open' order status)
+* tweaks and fixes to work with newest unopartyd changes (e.g. working with new 'open' order status)
 * we now filter out negative fee_required_remaining and fee_provided_remaining value items
     
 ### v0.9.4 ###

@@ -342,7 +342,7 @@ function WalletViewModel() {
     }
 
     if (notAvailable.length > 0) {
-      // else make a query to counterpartyd
+      // else make a query to unopartyd
       failoverAPI("get_assets_info", {'assetsList': notAvailable}, function(assetsInfo, endpoint) {
         for (var a in assetsInfo) {
           assetsDivisibility[assetsInfo[a]['asset']] = assetsInfo[a]['divisible'];
@@ -577,7 +577,7 @@ function WalletViewModel() {
   self.signAndBroadcastTxRaw = function(key, unsignedTxHex, onSuccess, onError, verifySourceAddr, verifyDestAddr) {
     assert(verifySourceAddr, "Source address must be specified");
     assert(verifyDestAddr, "Destination address must be specified");
-    //Sign and broadcast a multisig transaction that we got back from counterpartyd (as a raw unsigned tx in hex)
+    //Sign and broadcast a multisig transaction that we got back from unopartyd (as a raw unsigned tx in hex)
     // verifySourceAddr and verifyDestAddr MUST be specified to verify that the txn hash we get back from the server is what we expected.
 
     $.jqlog.debug("RAW UNSIGNED HEX: " + unsignedTxHex);

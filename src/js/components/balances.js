@@ -1410,7 +1410,7 @@ function SweepModalViewModel() {
 
           if (match != null) {
             $.jqlog.debug(arguments[1]);
-            // if insufficient bitcoins we retry with estimated fees return by counterpartyd
+            // if insufficient bitcoins we retry with estimated fees return by unopartyd
             var minEstimateFee = denormalizeQuantity(parseFloat(match[1])) - (self.btcBalanceForPrivateKey() - self.mergeCost);
             $.jqlog.debug('Insufficient fees. Need approximately ' + normalizeQuantity(minEstimateFee));
 

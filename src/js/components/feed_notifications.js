@@ -59,7 +59,7 @@ NotificationViewModel.calcText = function(category, message) {
     desc = i18n.t("notif_order_cancelled", message['tx_index'], getAddressLabel(message['source']));
   } else if (category == "dividend") {
     //See if any of our addresses own any of the specified asset, and if so, notify them of the callback or dividend
-    // NOTE that counterpartyd has automatically already adusted the balances of all asset holders...we just need to notify
+    // NOTE that unopartyd has automatically already adusted the balances of all asset holders...we just need to notify
     var addressesWithAsset = WALLET.getAddressesWithAsset(message['asset']);
     if (!addressesWithAsset.length) return;
     desc = i18n.t("notif_dividend_done", message['_dividend_asset_longname'] || message['dividend_asset'],

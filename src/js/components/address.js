@@ -31,7 +31,7 @@ function AddressViewModel(type, key, address, initialLabel, pubKeys) {
 
   self.assets = ko.observableArray([
     new AssetViewModel({address: address, asset: KEY_ASSET.BTC}), //will be updated with data loaded from insight
-    new AssetViewModel({address: address, asset: KEY_ASSET.XCP})  //will be updated with data loaded from counterpartyd
+    new AssetViewModel({address: address, asset: KEY_ASSET.XCP})  //will be updated with data loaded from unopartyd
   ]);
 
   self.dispensers = ko.observableArray([]);
