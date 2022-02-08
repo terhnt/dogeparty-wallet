@@ -192,7 +192,7 @@
   "sweeping_x_assets_from_to": "Sweeping %s %s from %s to %s",
   "quantity_must_be_between_0_and_1": "Quantity entered must be between 0 and 1 UNO.",
   "quantity_of_exceeds_balance": "The quantity of %s entered exceeds your available balance.",
-  "you_can_only_burn": "You can only burn <b>1 UNO</b> total for any given address. Even over multiple burns, the total quantity must be less than <b>1 UNO</b>.",
+  "you_can_only_burn": "You can only burn <b>5 UNO</b> total for any given address. Even over multiple burns, the total quantity must be less than <b>5 UNO</b>.",
   "you_will_be_burning": "You will be burning <b class='notoQuantityColor'>%s</b> <b class='notoAssetColor'>UNO</b> for approximately <b class='notoQuantityColor'>%s</b> <b class='notoAssetColor'>XUP</b>.",
   "you_have_burned": "You have burned <b class='notoQuantityColor'>%s</b> <b class='notoAssetColor'>UNO</b> for approximately <b class='notoQuantityColor'>%s</b> <b class='notoAssetColor'>XUP</b>.",
   "broadcast_transmitted": "Broadcast transmitted.",
