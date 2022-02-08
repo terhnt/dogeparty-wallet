@@ -181,7 +181,7 @@ function _makeJSONAPICall(destType, endpoints, method, params, timeout, onSucces
     makeJSONRPCCall(endpoints, method, params, timeout, onSuccess, onError);
   } else if (destType == "counterpartyd") {
     //make JSON API call to unoblockd, which will proxy it to counterpartyd
-    makeJSONRPCCall(endpoints, "proxy_to_counterpartyd", {
+    makeJSONRPCCall(endpoints, "proxy_to_unopartyd", {
       "method": method,
       "params": params
     }, timeout, onSuccess, onError);
