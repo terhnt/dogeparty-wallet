@@ -159,7 +159,7 @@ function makeJSONRPCCall(endpoints, method, params, timeout, onSuccess, onError)
 }
 
 function _makeJSONAPICall(destType, endpoints, method, params, timeout, onSuccess, onError, httpMethod) {
-  /*Makes a JSON RPC API call to a specific counterpartyd/unoblockd endpoint.
+  /*Makes a JSON RPC API call to a specific unopartyd/unoblockd endpoint.
 
     -endpoints: The specific API endpoint URL string to make the API request to.
      If a list of endpoint URLs are specified instead of a single URL, then we attempt the request
@@ -179,8 +179,8 @@ function _makeJSONAPICall(destType, endpoints, method, params, timeout, onSucces
   //make JSON API call to unoblockd
   if (destType == "unoblockd") {
     makeJSONRPCCall(endpoints, method, params, timeout, onSuccess, onError);
-  } else if (destType == "counterpartyd") {
-    //make JSON API call to unoblockd, which will proxy it to counterpartyd
+  } else if (destType == "unopartyd") {
+    //make JSON API call to unoblockd, which will proxy it to unopartyd
     makeJSONRPCCall(endpoints, "proxy_to_unopartyd", {
       "method": method,
       "params": params
@@ -190,7 +190,7 @@ function _makeJSONAPICall(destType, endpoints, method, params, timeout, onSucces
 
 function _getDestTypeFromMethod(method) {
   //based on the method, determine the endpoints list to use
-  var destType = "counterpartyd";
+  var destType = "unopartyd";
   if (['is_ready', 'get_reflected_host_info', 'is_chat_handle_in_use', 'record_btc_open_order',
       'get_messagefeed_messages_by_index', 'get_normalized_balances', 'get_required_btcpays',
       'get_chain_address_info', 'get_chain_block_height', 'get_chain_txns_status',
@@ -211,7 +211,7 @@ function _getDestTypeFromMethod(method) {
 }
 
 function supportUnconfirmedChangeParam(method) {
-  return method.split("_").shift() == "create" && _getDestTypeFromMethod(method) == "counterpartyd";
+  return method.split("_").shift() == "create" && _getDestTypeFromMethod(method) == "unopartyd";
 }
 
 function _multiAPIPrimative(method, params, onFinished) {
@@ -247,7 +247,7 @@ function _multiAPIPrimative(method, params, onFinished) {
 
           if (method != "is_ready") {
             //525 DETECTION (needed here and in failoverAPI() as failoverAPI() doesn't use this primative)
-            //detect a special case of all servers returning code 525, which would mean counterpartyd had a reorg and/or we are upgrading
+            //detect a special case of all servers returning code 525, which would mean unopartyd had a reorg and/or we are upgrading
             var allNotCaughtUp = true;
             for (var j = 0; j < gatheredResults.length; j++) {
               if (!gatheredResults['jqXHR'] || gatheredResults['jqXHR'].status != '525') {
@@ -274,10 +274,10 @@ function _multiAPIPrimative(method, params, onFinished) {
 /*
  AVAILABLE API CALL METHODS:
  * nonFailoverAPI: Used only by message feed requests currently (as the sequence numbers can theoritically change across multiple CW servers slightly due to mempool propagation differences)
- * failoverAPI: Used for all counterpartyd get_ API requests (for now...later we may want to move to multiAPINewest)
+ * failoverAPI: Used for all unopartyd get_ API requests (for now...later we may want to move to multiAPINewest)
  * multiAPI: Used for storing unoblockd state data (store_preferences, store_chat_handle, etc)
  * multiAPINewest: Used for fetching state data from unoblockd (e.g. get_preferences, get_chat_handle)
- * multiAPIConsensus: Used for all counterpartyd create_ API requests
+ * multiAPIConsensus: Used for all unopartyd create_ API requests
 */
 
 function nonFailoverAPI(method, params, onSuccess, onError) {
@@ -293,7 +293,7 @@ function nonFailoverAPI(method, params, onSuccess, onError) {
 
   //525 DETECTION (needed here and in _multiAPIPrimative) - wrap onError (so that this works even for user supplied onError)
   var onErrorOverride = function(jqXHR, textStatus, errorThrown, endpoint) {
-    //detect a special case of all servers returning code 525, which would mean counterpartyd had a reorg and/or we are upgrading
+    //detect a special case of all servers returning code 525, which would mean unopartyd had a reorg and/or we are upgrading
     //TODO: this is not perfect in this failover case now because we only see the LAST error. We are currently assuming
     // that if a) the LAST server returned a 525, and b) all servers are erroring out or down, that all servers are
     // probably returning 525s or updating (or messed up somehow) and we should just log the client out to be safe about it.
@@ -327,7 +327,7 @@ function failoverAPI(method, params, onSuccess, onError) {
   }
   //525 DETECTION (needed here and in _multiAPIPrimative) - wrap onError (so that this works even for user supplied onError)
   var onErrorOverride = function(jqXHR, textStatus, errorThrown, endpoint) {
-    //detect a special case of all servers returning code 525, which would mean counterpartyd had a reorg and/or we are upgrading
+    //detect a special case of all servers returning code 525, which would mean unopartyd had a reorg and/or we are upgrading
     //TODO: this is not perfect in this failover case now because we only see the LAST error. We are currently assuming
     // that if a) the LAST server returned a 525, and b) all servers are erroring out or down, that all servers are
     // probably returning 525s or updating (or messed up somehow) and we should just log the client out to be safe about it.
