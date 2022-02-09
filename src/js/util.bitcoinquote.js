@@ -25,9 +25,9 @@ var CWBitcoinQuote = (function() {
   }
 
   function refreshCache(cb, fallback) {
-    var url = "https://apiv2.bitcoinaverage.com/indices/global/ticker/short?crypto=BTC&fiat=USD";
+    var url = "https://api.coingecko.com/api/v3/simple/price?ids=unobtanium&vs_currencies=USD";//https://apiv2.bitcoinaverage.com/indices/global/ticker/short?crypto=BTC&fiat=USD
     if (fallback) {
-      url = "https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD";
+      url = "https://min-api.cryptocompare.com/data/price?fsym=UNO&tsyms=USD";
     }
 
     $.ajax({
@@ -42,7 +42,7 @@ var CWBitcoinQuote = (function() {
         }
       },
       error: function(jqxhr, textSatus, errorThrown) {
-        $.jqlog.warn('bitcoinaverage quote failed: '+textSatus+' '+errorThrown);
+        $.jqlog.warn('coingecko quote failed: '+textSatus+' '+errorThrown);
 
         if (!fallback) {
           refreshCache(cb, true)
@@ -59,9 +59,9 @@ var CWBitcoinQuote = (function() {
 
   function buildQuoteFromResponse(apiResponse, fallback) {
     if (fallback) {
-      quoteCache = apiResponse.USD
+      quoteCache = apiResponse.usd
     } else {
-      quoteCache = apiResponse.BTCUSD.last
+      quoteCache = apiResponse.USD
     }
     $.jqlog.debug('buildQuoteFromResponse fallback='+fallback+' quoteCache '+JSON.stringify(quoteCache));
   }
