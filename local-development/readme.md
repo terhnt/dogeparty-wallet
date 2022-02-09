@@ -1,4 +1,4 @@
-Local Counterwallet Development Instructions
+Local Unowallet Development Instructions
 ============================================
 
 Introduction

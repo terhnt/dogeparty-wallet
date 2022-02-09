@@ -84,7 +84,7 @@ grunt freeze
 3. Run `grunt build` to download translations
 4. Add the languages you want to support to `AVAILABLE_LANGUAGES` in **unowallet.conf.json** - you can use **unowallet.conf.json.example** as a template. The template file contains **only** the setting relevant to languages and does not replace the rest of variables required in that file (refer to Federeated Node documentation for additional details about `unowallet.conf`).
 
-Setting up your own Counterwallet Server
+Setting up your own Unowallet Server
 -----------------------------------------
 
 See [this link](http://counterparty.io/docs/federated_node/) for more info.
@@ -115,7 +115,7 @@ sudo apt-get install -y nodejs
 
 * the `--dontcheckdeps` speeds up the process and avoids having to do `grunt freeze` everytime you make a change to a dependency during development
 * If you want to test your local version on another device (or let another person test something) use https://ngrok.com to setup a tunnel to your local environment
-* If you want to use HTTPS, refer to additional steps required in the Counterwallet Docker start script
+* If you want to use HTTPS, refer to additional steps required in the Unowallet Docker start script
 
 ### Note concerning `npm install`
 `npm install` triggers a `prepublish` which is configured to do `grunt build`

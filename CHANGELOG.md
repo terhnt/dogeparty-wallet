@@ -59,7 +59,7 @@
 - Full multisig support
 - Free numeric asset and dividend fee support
 - Better internationalization
-- Make Counterwallet possible to package in Linux
+- Make Unowallet possible to package in Linux
 
 **Removed features:**
 - BTC Trading
