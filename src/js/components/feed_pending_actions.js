@@ -192,7 +192,7 @@ function PendingActionFeedViewModel() {
     if (match) {
       //if the magically hackish btcRefreshSpecialLogic flag is specified, then do a few custom checks
       // that prevent us from removing events whose txns we see as recent txns, but are actually NOT btc
-      // send txns (e.g. is a counterparty asset send, or asset issuance, or something the BTC balance refresh
+      // send txns (e.g. is a unoparty asset send, or asset issuance, or something the BTC balance refresh
       // routine should NOT be deleting. This hack is a consequence of managing BTC balances synchronously like we do)
       if (btcRefreshSpecialLogic) {
         assert(category === "sends");

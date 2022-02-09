@@ -20,7 +20,7 @@ In html:
 OR if only one arg
 <span data-bind="locale: 'key2', localeArgs: 'world'"></span> => <span>Hello world</span>
 <input data-bind="localeAttr: {'placeholder': 'key1'}" /> => <input placeholder="Hello world" />
-<input data-bind="localeAttr: {'placeholder': 'key2'}, localeAttrArgs: {'placeholder': ['world']}" /> => <input placeholder="Hello world" /> 
+<input data-bind="localeAttr: {'placeholder': 'key2'}, localeAttrArgs: {'placeholder': ['world']}" /> => <input placeholder="Hello world" />
 OR if only one arg
 <input data-bind="localeAttr: {'placeholder': 'key2'}, localeAttrArgs: {'placeholder': 'world'}" /> => <input placeholder="Hello world" />
 
@@ -28,7 +28,7 @@ Knockout bug workaround for variables args:
 
 in the view model :
 self.world = 'World'
-in the html: 
+in the html:
 <span data-bind="locale: 'key2', localeArgs: world"></span> => <span>Hello world</span>
 OR if more than one args
 <span data-bind="locale: 'key2', localeArgs: {0: world}"></span> => <span>Hello world</span>

@@ -152,7 +152,7 @@ function LogonViewModel() {
         WALLET.networkBlockHeight(data['block_height']);
 
         //Initialize the message feed (polls the server and notifies us of new
-        //events, as counterparty processes confirmed blocks and tx in mempool)
+        //events, as unoparty processes confirmed blocks and tx in mempool)
         MESSAGE_FEED.init(data['last_message_index'], data['cw_last_message_seq']);
         //^ set the "starting" message_index, under which we will ignore if received on the messages feed
 
@@ -177,7 +177,7 @@ function LogonViewModel() {
       },
       function(jqXHR, textStatus, errorThrown, endpoint) {
         var message = describeError(jqXHR, textStatus, errorThrown);
-        bootbox.alert(i18n.t("no_counterparty_error", message));
+        bootbox.alert(i18n.t("no_unoparty_error", message));
       });
   }
 
@@ -381,7 +381,7 @@ function LogonViewModel() {
     //updates all balances for all addesses, creating the asset objects on the address if need be
     WALLET.refreshBTCBalances(true, additionalBTCAddresses, function() {
       //^ specify true here to start a recurring get BTC balances timer chain
-      WALLET.refreshCounterpartyBalances(WALLET.getAddressesList(), onSuccess);
+      WALLET.refreshUnopartyBalances(WALLET.getAddressesList(), onSuccess);
     });
   }
 

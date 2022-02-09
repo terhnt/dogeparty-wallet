@@ -29,7 +29,7 @@ function WalletViewModel() {
   }
 
   self.networkBlockHeight.subscribe(function(newBlockIndex) {
-    self.isSegwitEnabled = false // newBlockIndex >= 557236 // should be synced up to "segwit_support" entry from counterparty-lib/counterpartylib/protocol_changes.json
+    self.isSegwitEnabled = false // newBlockIndex >= 557236 // should be synced up to "segwit_support" entry from unoparty-lib/unopartylib/protocol_changes.json
 
     updateSegwitGenerationVisibility()
 
@@ -369,10 +369,10 @@ function WalletViewModel() {
     return _.uniq(assets);
   }
 
-  self.refreshCounterpartyBalances = function(addresses, onSuccess) {
-    //update all counterparty asset balances for the specified address (including XCP)
+  self.refreshUnopartyBalances = function(addresses, onSuccess) {
+    //update all unoparty asset balances for the specified address (including XCP)
     //Note: after login, this normally never needs to be called (except when adding a watch address),
-    // as counterparty asset balances are updated automatically via the messages feed
+    // as unoparty asset balances are updated automatically via the messages feed
     $.jqlog.debug('Updating normalized balances for a multiple addresses at wallet ' + addresses)
     failoverAPI("get_normalized_balances", {'addresses': addresses},
       function(balancesData, endpoint) {
@@ -494,7 +494,7 @@ function WalletViewModel() {
 
           if (pendingActionsHasBTCSend) {
             //see if data[i]['lastTxns'] includes any hashes that exist in the Pending Actions, which
-            // means we MAY be able to remove them from that listing (i.e. they COULD be non-BTC send (i.e. counterparty transactions) though
+            // means we MAY be able to remove them from that listing (i.e. they COULD be non-BTC send (i.e. unoparty transactions) though
             //TODO: This is not very efficient when a BTC send is pending... O(n^3)! Although the sample sets are relatively small...
             for (var j = 0; j < data[i]['lastTxns'].length; j++) {
               PENDING_ACTION_FEED.remove(data[i]['lastTxns'][j], "sends", true);
@@ -736,9 +736,9 @@ function WalletViewModel() {
   }
 
   /////////////////////////
-  //Counterparty transaction-related
+  //Unoparty transaction-related
   self.canDoTransaction = function(address) {
-    /* ensures that the specified address can perform a counterparty transaction */
+    /* ensures that the specified address can perform a unoparty transaction */
     var addressObj = self.getAddressObj(address);
     assert(!addressObj.IS_WATCH_ONLY, "Cannot perform this action on a watch only address!");
 
