@@ -386,7 +386,7 @@ function CreateNewAddressModalViewModel() {
 
     //save prefs to server
     WALLET.storePreferences(function(data, endpoint) {
-      WALLET.refreshCounterpartyBalances([newAddress], function() {
+      WALLET.refreshUnopartyBalances([newAddress], function() {
         WALLET.refreshBTCBalances(false, null, function() {
           self.shown(false);
           setTimeout(checkURL, 300);
@@ -1592,7 +1592,7 @@ function SweepModalViewModel() {
       pubkey: pubkey,
       allow_unconfirmed_inputs: true
     };
-    multiAPIConsensus("create_send", sendData, //can send both BTC and counterparty assets
+    multiAPIConsensus("create_send", sendData, //can send both UNO and unoparty assets
       function(unsignedTxHex, numTotalEndpoints, numConsensusEndpoints) {
 
         key.checkAndSignRawTransaction(unsignedTxHex, [self.destAddress()], function(err, signedHex) {
@@ -1866,7 +1866,7 @@ function TestnetBurnModalViewModel() {
       validator: function(val, self) {
         return parseFloat(val) > 0 && parseFloat(val) <= 5;
       },
-      message: i18n.t('quantity_must_be_between_0_and_1'),
+      message: i18n.t('quantity_must_be_between_0_and_5'),
       params: self
     }, {
       validator: function(val, self) {
@@ -1941,7 +1941,7 @@ function TestnetBurnModalViewModel() {
     if (resetForm) self.resetForm();
     self.address(address);
 
-    //get the current block height, to calculate the XCP burn payout
+    //get the current block height, to calculate the XUP burn payout
     //determine whether the selected address has burned before, and if so, how much
     failoverAPI("get_burns", {filters: {'field': 'source', 'op': '==', 'value': address}}, function(data, endpoint) {
       var totalBurned = 0;

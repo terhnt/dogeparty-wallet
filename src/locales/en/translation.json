@@ -30,7 +30,7 @@
   "create_wallet": "Create Wallet",
   "your_wallet_is_ready": "Your wallet is ready. Use your passphrase or your quick access url to login.",
   "testnet": "Testnet",
-  "powered_by_counterparty": "Powered by Unoparty",
+  "powered_by_unoparty": "Powered by Unoparty",
   "create_new_wallet": "Create New Wallet",
   "new_to_unowallet": "New to Unowallet, and want to just play around?",
   "try_testnet": "Try Unowallet Testnet!",
@@ -139,7 +139,7 @@
   "answer_13": "What is the difference between 'miner's fee' and 'redeemable fee'?",
   "answer_14": "What do UNO sellers on the Unoparty Distributed Exchange need to know?",
   "for_other_questions": "For other questions, please ask in",
-  "counterparty_forums": "the Unoparty support forums",
+  "unoparty_forums": "the Unoparty support forums",
   "for_bugs": "For bugs, you may",
   "open_a_ticket": "open a support ticket",
 
@@ -148,7 +148,7 @@
   "send_with": "Send with:",
   "send_amount": "Send Amount:",
   "you_are_choosing_to_send": "You are choosing to send",
-  "to_support_counterparty": "to support Unoparty and the open-source community.",
+  "to_support_unoparty": "to support Unoparty and the open-source community.",
 
   "create_support_case": "Create Support Case",
   "create_support_case_desc1": "Create a support case by filling out the information below.",
@@ -190,7 +190,7 @@
   "peparing_transaction_chaining": "Preparing output for transactions chaining",
   "transferring_asset_from_to": "Transferring asset %s from %s to %s",
   "sweeping_x_assets_from_to": "Sweeping %s %s from %s to %s",
-  "quantity_must_be_between_0_and_1": "Quantity entered must be between 0 and 1 UNO.",
+  "quantity_must_be_between_0_and_5": "Quantity entered must be between 0 and 5 UNO.",
   "quantity_of_exceeds_balance": "The quantity of %s entered exceeds your available balance.",
   "you_can_only_burn": "You can only burn <b>5 UNO</b> total for any given address. Even over multiple burns, the total quantity must be less than <b>5 UNO</b>.",
   "you_will_be_burning": "You will be burning <b class='notoQuantityColor'>%s</b> <b class='notoAssetColor'>UNO</b> for approximately <b class='notoQuantityColor'>%s</b> <b class='notoAssetColor'>XUP</b>.",
@@ -390,7 +390,7 @@
   "hist_credit_debit": "Address <Ad>%s</Ad> %s <Am>%s</Am> <As>%s</As>",
   "hist_unknown": "UNKNOWN TRANSACTION TYPE",
 
-  "no_counterparty_error": "No counterparty servers are currently available. Please try again later. ERROR: %s",
+  "no_unoparty_error": "No unoparty servers are currently available. Please try again later. ERROR: %s",
   "multi_connection": "<b class='errorColor'>You appear to be logged into Unowallet elsewhere.</b> It's not safe to be logged into the same wallet account from multiple devices at the same time. If you are sure that this is not the case, press Continue. Otherwise, please press Cancel, logout from your other device, and try again.",
   "confirm_connection": "Confirm connection",
   "default_address_label": "My Address #%s",
@@ -736,7 +736,7 @@
   "no_entries": "No entries",
 
   "account_history": "Account History",
-  "recent_counterparty_transactions": "Recent Unoparty Transactions (last 60 days, exclude UNO transactions)",
+  "recent_unoparty_transactions": "Recent Unoparty Transactions (last 60 days, exclude UNO transactions)",
   "recent_transactions": "Recent Transactions",
   "balance_history": "Balance History",
   "show_for_address": "Show for Address",
