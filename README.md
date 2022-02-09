@@ -2,10 +2,10 @@
 [![Build Status Circle](https://circleci.com/gh/terhnt/unowallet.svg?&style=shield)](https://circleci.com/gh/terhnt/unowallet)
 [![Slack Status](http://slack.counterparty.io/badge.svg)](http://slack.counterparty.io)
 
-Counterwallet
+Unowallet
 ================
 
-Online Webwallet for [Counterparty](http://www.counterparty.io).
+Online Webwallet for [Unoparty](http://www.unoparty.io).
 
 Originally based off of [Carbonwallet](http://www.carbonwallet.com) (however virtually all the original code has been removed or rewritten).
 
@@ -15,14 +15,14 @@ Production Systems
 
 * Main page: **[unowallet.io](https://unowallet.io/)**
 * Primary server -- Mainnet: **[wallet.unowallet.io](https://wallet.unowallet.io/)**
-* Primary server -- Testnet: **[wallet-testnet.unowallet.io](https://wallet-testnet.unowallet.io/)**
+* Primary server -- Testnet: **[testnet.unowallet.io](https://testnet.unowallet.io/)**
 
 
 Features
 ----------
 
 - Deterministic wallet addresses (BIP 32-based)
-- Supports the majority of Counterparty functionality
+- Supports the majority of Unoparty functionality
 - Fully-AJAX driven
 - Anonymous
 - Runs in the browser, with keys created in memory
@@ -92,10 +92,10 @@ See [this link](http://counterparty.io/docs/federated_node/) for more info.
 Development
 -----------
 
-The easiest way to develop locally is to install Federated Node in Docker environment. If you already have Bitcoin Core addrindex, Counterparty Server and Counterblock, then Counterwallet can be manually installed using either of these approaches:
+The easiest way to develop locally is to install Federated Node in Docker environment. If you already have Unobtanium Core addrindex, Unoparty Server and Unoblock, then Unowallet can be manually installed using either of these approaches:
 
-* Stand-alone Docker environment: refer to docker\start.sh in the Counterwallet source code.
-* Manually: example based on the Docker template for Counterwallet on Ubuntu 16.04 is provided below.
+* Stand-alone Docker environment: refer to docker\start.sh in the Unowallet source code.
+* Manually: example based on the Docker template for Unowallet on Ubuntu 16.04 is provided below.
 
 ### Manual installation in local environment (Ubuntu 16.04):
 1. Clone repository and `cd` into result folder
