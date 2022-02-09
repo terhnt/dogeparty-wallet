@@ -95,7 +95,7 @@ CWHierarchicalKey.prototype.getOldAddressesInfos = function(callback) {
     cwkeys[address] = cwk;
   }
 
-  Counterblock.getBalances(addresses, cwkeys, callback);
+  Unoblock.getBalances(addresses, cwkeys, callback);
 }
 
 CWHierarchicalKey.prototype.getAddressKey = function(index) {

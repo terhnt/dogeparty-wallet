@@ -1,6 +1,6 @@
-Counterblock = {};
+Unoblock = {};
 
-Counterblock.getBalances = function(addresses, cwkeys, callback) {
+Unoblock.getBalances = function(addresses, cwkeys, callback) {
 
   WALLET.retrieveBTCAddrsInfo(addresses, function(btcData) {
     $.jqlog.debug('Updating normalized balances for a single addresses at unoblock ' + addresses)
