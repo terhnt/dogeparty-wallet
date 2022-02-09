@@ -25,7 +25,7 @@ var CWBitcoinQuote = (function() {
   }
 
   function refreshCache(cb, fallback) {
-    var url = "https://api.coingecko.com/api/v3/simple/price?ids=unobtanium&vs_currencies=USD";//https://apiv2.bitcoinaverage.com/indices/global/ticker/short?crypto=BTC&fiat=USD
+    var url = "https://api.coingecko.com/api/v3/simple/price?ids=unobtanium&vs_currencies=USD";
     if (fallback) {
       url = "https://min-api.cryptocompare.com/data/price?fsym=UNO&tsyms=USD";
     }
@@ -59,7 +59,7 @@ var CWBitcoinQuote = (function() {
 
   function buildQuoteFromResponse(apiResponse, fallback) {
     if (fallback) {
-      quoteCache = apiResponse.usd
+      quoteCache = apiResponse.unobtanium.usd
     } else {
       quoteCache = apiResponse.USD
     }
