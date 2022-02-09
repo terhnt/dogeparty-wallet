@@ -59,9 +59,9 @@ var CWBitcoinQuote = (function() {
 
   function buildQuoteFromResponse(apiResponse, fallback) {
     if (fallback) {
-      quoteCache = apiResponse.unobtanium.usd
-    } else {
       quoteCache = apiResponse.USD
+    } else {
+      quoteCache = apiResponse.unobtanium.usd
     }
     $.jqlog.debug('buildQuoteFromResponse fallback='+fallback+' quoteCache '+JSON.stringify(quoteCache));
   }
