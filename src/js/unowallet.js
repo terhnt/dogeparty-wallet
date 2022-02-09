@@ -181,7 +181,7 @@ function initRollbar() {
   }
 }
 
-function loadunowalletConfigFromServer() {
+function loadUnowalletConfigFromServer() {
   //Request for the unowallet.conf.json file, which should contain an array of API backends for us to use
   $.getJSON(UNOWALLET_CONF_LOCATION, function(data) {
     assert(data && typeof data == "object" && data.hasOwnProperty("servers"), "Returned unowallet.conf.json file does not contain valid JSON object");
@@ -373,6 +373,6 @@ $(document).ready(function() {
 
   autoDropUpDropdowns();
 
-  loadunowalletConfigFromServer();
+  loadUnowalletConfigFromServer();
 
 });
