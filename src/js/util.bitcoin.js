@@ -6,7 +6,7 @@ function normalizeQuantity(quantity, divisible) {
 }
 
 function denormalizeQuantity(quantity, divisible) {
-  //Converts from float (decimal form) to satoshi (int) 
+  //Converts from float (decimal form) to satoshi (int)
   if (typeof(divisible) === 'undefined') divisible = true;
   return divisible && quantity !== 0 ? Decimal.round(new Decimal(quantity).mul(UNIT), 8, Decimal.MidpointRounding.ToEven).toFloat() : parseInt(quantity);
   //^ we have the quantity !== 0 check due to a bug in Decimal (https://github.com/hiroshi-manabe/JSDecimal/issues/2)
@@ -101,7 +101,7 @@ function testnetBurnDetermineEarned(blockHeight, burned) {
   burned = denormalizeQuantity(burned);
   var total_time = TESTNET_BURN_END - TESTNET_BURN_START;
   var partial_time = TESTNET_BURN_END - blockHeight;
-  var multiplier = 2000 * (500 * (partial_time / total_time)); //will be approximate
+  var multiplier = 2000 + (500 * (partial_time / total_time)); //will be approximate
   var earned = Decimal.round(new Decimal(burned).mul(multiplier), 8, Decimal.MidpointRounding.ToEven).toFloat();
   return normalizeQuantity(earned);
 }
@@ -155,4 +155,3 @@ function bytesToWordArray(bytes) {
 function wordArrayToBytes(wordArray) {
   return wordsToBytes(wordArray.words)
 }
-
