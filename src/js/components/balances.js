@@ -852,7 +852,7 @@ function MeltAssetModalViewModel() {
     }
   });
 
-  self.meltQuantity = ko.observable().extend({
+  self.quantity = ko.observable().extend({
     required: true,
     isValidPositiveQuantity: self,
     isValidQtyForDivisibility: self,
@@ -879,12 +879,12 @@ function MeltAssetModalViewModel() {
 
   self.validationModel = ko.validatedObservable({
     asset: self.asset,
-    meltQuantity: self.meltQuantity,
+    quantity: self.quantity,
     customFee: self.customFee,
   });
 
   self.resetForm = function() {
-    self.meltQuantity(null);
+    self.quantity(null);
 
     self.feeController.reset();
 
@@ -902,11 +902,11 @@ function MeltAssetModalViewModel() {
 
   self.maxAmount = function() {
     assert(self.normalizedBalance(), "No balance present?");
-    self.meltQuantity(self.normalizedBalance());
+    self.quantity(self.normalizedBalance());
   }
 
   self.doAction = function() {
-    WALLET.doTransactionWithTxHex(self.address(), "melt", self.buildMeltTransactionData(), self.feeController.getUnsignedTx(),
+    WALLET.doTransactionWithTxHex(self.address(), "create_melt", self.buildMeltTransactionData(), self.feeController.getUnsignedTx(),
       function(txHash, data, endpoint, addressType, armoryUTx) {
         var message = "<b>" + (armoryUTx ? i18n.t("will_be_melted") : i18n.t("were_melted")) + " </b>"; //will_be_dispensed / were_dispensed
         WALLET.showTransactionCompleteDialog(message + " " + i18n.t(ACTION_PENDING_NOTICE), message, armoryUTx);
@@ -920,7 +920,7 @@ function MeltAssetModalViewModel() {
     params = {
       source: self.address(),
       asset: self.asset(),
-      meltQuantity: denormalizeQuantity(parseFloat(self.meltQuantity()), self.divisible()),
+      quantity: denormalizeQuantity(parseFloat(self.quantity()), self.divisible()),
       _fee_option: 'custom',
       _custom_fee: self.feeController.getCustomFee()
     };
@@ -930,8 +930,8 @@ function MeltAssetModalViewModel() {
 
     // mix in shared fee calculation functions
   self.feeController = CWFeeModelMixin(self, {
-    action: "melt",
-    transactionParameters: [self.address, self.asset, self.meltQuantity],
+    action: "create_melt",
+    transactionParameters: [self.address, self.asset, self.quantity],
     validTransactionCheck: function() {
       return self.validationModel.isValid();
     },
@@ -1992,7 +1992,7 @@ function SignMessageModalViewModel() {
 //  var self = this;
 //  self.shown = ko.observable(false);
 //  self.address = ko.observable(''); // SOURCE address (supplied)
-//  self.meltQuantity = ko.observable('');
+//  self.quantity = ko.observable('');
 //}
 
 function TestnetBurnModalViewModel() {

@@ -254,7 +254,7 @@ function AddressViewModel(type, key, address, initialLabel, pubKeys) {
   //      asset_longname: assetInfo['asset_longname'],
   //      divisible: assetInfo['divisible'],
   //      description: assetInfo['description'],
-  //      meltQuantity: normalizeQuantity(asset.quantity, assetInfo['divisible']),
+  //      quantity: normalizeQuantity(asset.quantity, assetInfo['divisible']),
   //    }
   //    //self.melts.push(new MeltViewModel(meltProps));
   //  }else{
