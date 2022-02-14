@@ -9,6 +9,7 @@ function AssetViewModel(props) {
   self.ASSET_DISP = _.truncate(self.ASSET_LONGNAME || self.ASSET, SUBASSET_MAX_DISP_LENGTH); // truncate if necessary
 
   self.DIVISIBLE = props['divisible'] !== undefined ? props['divisible'] : true;
+  self.MELTABLE = props['meltable'] !== undefined ? props['meltable'] : false;
   self.owner = ko.observable(props['owner']);
   self.locked = ko.observable(props['locked'] !== undefined ? props['locked'] : false);
   self.rawBalance = ko.observable(props['rawBalance'] || (self.ASSET === KEY_ASSET.BTC ? null : 0));
@@ -112,6 +113,19 @@ function AssetViewModel(props) {
     }
     if (!WALLET.canDoTransaction(self.ADDRESS)) return false;
     CREATE_DISPENSER_MODAL.show(self.ADDRESS, self.ASSET, self.ASSET_DISP, self.rawAvailableBalance(), self.DIVISIBLE);
+  }
+
+  self.melt = function() {
+    if (self.availableBalance() <= 0) {
+      bootbox.alert(i18n.t("not_available_asset_to_melt", self.ASSET, getAddressLabel(self.ADDRESS)));
+      return;
+    }
+    if (!self.MELTABLE) {
+      bootbox.alert(i18n.t("not_meltable_asset", self.ASSET, getAddressLabel(self.ADDRESS)));
+      return;
+    }
+    if (!WALLET.canDoTransaction(self.ADDRESS)) return false;
+    MELT_MODAL.show(self.ADDRESS, self.ASSET, self.ASSET_DISP, self.rawAvailableBalance(), self.DIVISIBLE);
   }
 
   self.showInfo = function() {
