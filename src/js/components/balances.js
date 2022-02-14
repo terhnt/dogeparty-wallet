@@ -931,7 +931,7 @@ function MeltAssetModalViewModel() {
     // mix in shared fee calculation functions
   self.feeController = CWFeeModelMixin(self, {
     action: "melt",
-    transactionParameters: [],
+    transactionParameters: [self.address, self.asset, self.meltQuantity],
     validTransactionCheck: function() {
       return self.validationModel.isValid();
     },
