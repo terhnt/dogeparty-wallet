@@ -521,7 +521,7 @@ function SendModalViewModel() {
     self.missingPubkey2Address('');
     self.missingPubkey3(false);
     self.missingPubkey3Address('');
-
+giveQuantityLabel
     if (!self.destAddress()) return;
     if (!CWBitcore.isValidMultisigAddress(self.destAddress())) return;
 
@@ -876,7 +876,7 @@ function MeltAssetModalViewModel() {
   self.dispNormalizedBalance = ko.computed(function() {
     return smartFormat(self.normalizedBalance(), null, 8);
   }, self);
-  
+
   self.validationModel = ko.validatedObservable({
     asset: self.asset,
     meltQuantity: self.meltQuantity,
@@ -913,7 +913,7 @@ function MeltAssetModalViewModel() {
       }
     );
     self.shown(false);
-    trackEvent('Balances', 'melted', self.asset());
+    //trackEvent('Balances', 'melted', self.asset());
   }
 
   self.buildMeltTransactionData = function() {

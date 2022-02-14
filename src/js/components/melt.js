@@ -51,7 +51,7 @@ function MeltViewModel(props) { //DispenserViewModel(props) {
               {
                 source: self.ADDRESS,
                 asset: self.ASSET,
-                quantity: self.meltQuantity
+                meltQuantity: self.meltQuantity
               },
               function(txHash, data, endpoint, addressType, armoryUTx) {
                 var message = i18n.t("can_dispense_before_closing");
