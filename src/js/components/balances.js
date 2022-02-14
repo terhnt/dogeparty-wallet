@@ -921,7 +921,7 @@ function MeltAssetModalViewModel() {
     params = {
       source: self.address(),
       asset: self.asset(),
-      melt_quantity: denormalizeQuantity(parseFloat(self.melt_quantity()), self.divisible()),
+      meltQuantity: denormalizeQuantity(parseFloat(self.meltQuantity()), self.divisible()),
       _fee_option: 'custom',
       _custom_fee: self.feeController.getCustomFee()
     };
@@ -931,12 +931,12 @@ function MeltAssetModalViewModel() {
 
     // mix in shared fee calculation functions
   self.feeController = CWFeeModelMixin(self, {
-    action: "create_dispenser",
+    action: "melt",
     transactionParameters: [],
     validTransactionCheck: function() {
       return self.validationModel.isValid();
     },
-    buildTransactionData: self.buildDispenserTransactionData
+    buildTransactionData: self.buildMeltTransactionData
   });
 
   self.show = function(fromAddress, asset, assetDisp, rawBalance, isDivisible, resetForm) {

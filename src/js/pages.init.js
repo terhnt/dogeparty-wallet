@@ -113,7 +113,7 @@ function initBalances() {
   window.CREATE_NEW_ADDRESS_MODAL = new CreateNewAddressModalViewModel();
   window.SEND_MODAL = new SendModalViewModel();
   window.CREATE_DISPENSER_MODAL = new CreateDispenserModalViewModel();
-  window.MELT_MODAL = new MeltModalViewModel();
+  window.MELT_MODAL = new MeltAssetModalViewModel();
   window.SWEEP_MODAL = new SweepModalViewModel();
   window.SIGN_MESSAGE_MODAL = new SignMessageModalViewModel();
   window.TESTNET_BURN_MODAL = new TestnetBurnModalViewModel();
