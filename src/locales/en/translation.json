@@ -862,6 +862,7 @@
   "melt_token": "Melt asset <b>%s</b> in your address %s. You have <b><span class=\"buyColor\">%s</span> <span class=\"buyColor\">%s</span></b> available to melt",
   "melt_token_warning": "Take into account that melting this asset will send it to a burn address and you will receive the asset stored inside it, you cannot undo this action.",
   "dispense_give": "Amount to dispense",
+  "melt_qty": "Amount to melt",
   "dispense_escrow": "Amount to escrow",
   "dispenser_total_quantity": "The total quantity to escrow, it's suggested to be a multiple of the dispenser give amount",
   "mainchainrate_get": "Main chain rate",

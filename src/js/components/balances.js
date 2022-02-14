@@ -873,7 +873,10 @@ function MeltAssetModalViewModel() {
     return normalizeQuantity(self.rawBalance(), self.divisible());
   }, self);
 
-
+  self.dispNormalizedBalance = ko.computed(function() {
+    return smartFormat(self.normalizedBalance(), null, 8);
+  }, self);
+  
   self.validationModel = ko.validatedObservable({
     asset: self.asset,
     meltQuantity: self.meltQuantity,
