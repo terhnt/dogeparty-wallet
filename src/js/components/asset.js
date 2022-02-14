@@ -40,6 +40,10 @@ function AssetViewModel(props) {
     return self.ASSET === KEY_ASSET.BTC;
   }, self);
 
+  self.isMeltable = ko.computed(function() {
+    return self.MELTABLE === true;
+  }, self);
+
   self.isXCP = ko.computed(function() {
     return self.ASSET === KEY_ASSET.XCP;
   }, self);
