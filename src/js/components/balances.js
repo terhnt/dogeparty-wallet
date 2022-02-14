@@ -876,16 +876,12 @@ function MeltAssetModalViewModel() {
 
   self.validationModel = ko.validatedObservable({
     asset: self.asset,
-    give_quantity: self.give_quantity,
-    escrow_quantity: self.escrow_quantity,
-    mainchainrate: self.mainchainrate,
+    meltQuantity: self.meltQuantity,
     customFee: self.customFee,
   });
 
   self.resetForm = function() {
-    self.give_quantity(null);
-    self.escrow_quantity(null);
-    self.mainchainrate(null);
+    self.meltQuantity(null);
 
     self.feeController.reset();
 
@@ -946,7 +942,7 @@ function MeltAssetModalViewModel() {
     if (resetForm) self.resetForm();
     self.address(fromAddress);
     self.asset(asset);
-      //self.assetDisp(assetDisp);
+    self.assetDisp(assetDisp);
     self.rawBalance(rawBalance);
     self.divisible(isDivisible);
     $('#sendFeeOption').select2("val", self.feeOption()); //hack
