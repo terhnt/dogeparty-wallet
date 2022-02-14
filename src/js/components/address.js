@@ -240,6 +240,28 @@ function AddressViewModel(type, key, address, initialLabel, pubKeys) {
     }
   }
 
+  // New Protocol - Melt Assets
+  //self.meltingAsset = function(asset, assetInfo) {
+  //  var match = ko.utils.arrayFirst(self.assets(), function(item) {
+  //    return item.ASSET === asset;
+  //  });
+
+    // if asset exists, continue
+  //  if (match) {
+  //    var meltProps = {
+  //      address: self.ADDRESS,
+  //      asset: dispenser.asset,
+  //      asset_longname: assetInfo['asset_longname'],
+  //      divisible: assetInfo['divisible'],
+  //      description: assetInfo['description'],
+  //      meltQuantity: normalizeQuantity(asset.quantity, assetInfo['divisible']),
+  //    }
+  //    //self.melts.push(new MeltViewModel(meltProps));
+  //  }else{
+
+  //  }
+  //}
+
   self.addOrUpdateDispenser = function(dispenser, assetInfo) {
     var match = ko.utils.arrayFirst(self.dispensers(), function(item) {
       return item.ASSET === dispenser.asset

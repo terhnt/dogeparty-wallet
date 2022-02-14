@@ -234,6 +234,12 @@ function WalletViewModel() {
     });
   }
 
+  self.meltingAsset = function(asset){
+    var addressObj = null, assetObj = null;
+    var assetObj = addressObj.getAssetObj(asset);
+    // TODO: finish this call.
+  }
+
   self.addOrUpdateDispenser = function(addressObj, dispenser) {
     var assetObj = addressObj.getAssetObj(dispenser.asset);
     if (!assetObj) {

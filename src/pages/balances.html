@@ -1318,6 +1318,83 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<!-- modal for melt_asset -->
+<div data-bind="showModal: shown, validationOptions: { insertMessages: false }" id="meltModal" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="meltModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" data-bind="click: hide" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" data-bind="locale: 'melt_asset'"></h4>
+      </div>
+      <div class="modal-body no-padding">
+        <p class="formPadded" data-bind="locale: 'melt_token', localeArgs: {0: assetDisp, 1: address, 2: dispNormalizedBalance, 3: assetDisp}"></p>
+
+        <p class="formPadded" data-bind="locale: 'melt_token_warning'"></p>
+
+        <form class="smart-form" data-bind="submit: doAction"><fieldset>
+
+          <section><div class="row">
+            <label class="control-label col col-sm-3" data-bind="locale: 'melt_qty'"></label>
+            <div class="col col-sm-9">
+                <label id="giveQuantityLabel" class="input inline-block">
+                    <i class="icon-append fa fa-share"></i>
+                    <input name="quantity" data-bind="value: meltQuantity, valueUpdate: 'input', localeAttr: {'placeholder': 'melt_quantity'}" type="text"/>
+                </label>
+                <span>&nbsp;&nbsp;<button type="button" data-bind="click: maxAmount, locale: 'max'" class="btn btn-default btn-sm"></button></span>
+                <span class="invalid" data-bind="validationMessage: quantity"></span>
+            </div>
+          </div></section>
+
+        <fieldset>
+          <section><!-- fee section -->
+            <div class="row">
+              <label class="control-label col col-sm-3" data-bind="locale: 'fee_option'"></label>
+              <div class="col col-sm-9">
+                  <input name="feeSlider" data-bind="value: feeSlider, valueUpdate: 'input', attr: {max: feeSliderMax}" type="range" min="0" step="1">
+              </div>
+            </div>
+            <div class="row">
+              <label class="control-label col col-sm-3">&nbsp;</label>
+              <div class="col col-sm-9">
+                <div class="fee-info" data-bind="fadeVisibleInOnly: normalizedBalRemainingIsSet">
+                  <span class="formPaddedBot" data-bind="visible: transactionParamsAreValid, locale: feeDetailsLocaleName, localeArgs: feeDetailsLocaleArgs"></span>
+                  <br />
+                  <span class="formPaddedBot" data-bind="visible: customFee, locale: feePriorityLocaleName, localeArgs: feePriorityLocaleArgs"></span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section><div class="row">
+            <label class="control-label col col-sm-2" data-bind="locale: 'fee_option'"></label>
+            <div class="col col-sm-5">
+                <label class="input">
+                    <select id="sendFeeOption" name="feeOption" class="select2" data-bind="select2: { minimumResultsForSearch: 100 }, value: feeOption, valueUpdate: 'input'" style="width:100%">
+                      <option value="optimal" data-bind="locale: 'fee_option_optimal'"></option>
+                      <option value="low_priority" data-bind="locale: 'fee_option_low_priority'"></option>
+                      <option value="custom" data-bind="locale: 'fee_option_custom'"></option>
+                    </select>
+                </label>
+            </div>
+            <div class="col col-sm-5">
+                <label class="input">
+                    <input name="customFee" data-bind="visible: feeOption() === 'custom', value: customFee, localeAttr: {'placeholder': 'enter_fee_option_custom'}"/>
+                </label>
+                <span class="invalid" data-bind="validationMessage: customFee"></span>
+            </div>
+          </div></section>
+
+        </fieldset></form>
+        <p class="formPaddedBot" data-bind="fadeVisibleInOnly: normalizedBalRemainingIsSet, locale: 'after_melting', localeArgs: {0: dispNormalizedBalRemaining, 1: assetDisp}"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bind="click: hide, locale: 'cancel'"></button>
+        <button type="button" data-bind="enable: transactionIsReady, click: submitForm, locale: 'melt_asset'" class="btn btn-primary"></button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <!-- modal for create_dispenser -->
 <div data-bind="showModal: shown, validationOptions: { insertMessages: false }" id="dispenserModal" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="dispenserModal" aria-hidden="true">
   <div class="modal-dialog">

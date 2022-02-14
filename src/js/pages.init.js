@@ -113,6 +113,7 @@ function initBalances() {
   window.CREATE_NEW_ADDRESS_MODAL = new CreateNewAddressModalViewModel();
   window.SEND_MODAL = new SendModalViewModel();
   window.CREATE_DISPENSER_MODAL = new CreateDispenserModalViewModel();
+  window.MELT_MODAL = new MeltModalViewModel();
   window.SWEEP_MODAL = new SweepModalViewModel();
   window.SIGN_MESSAGE_MODAL = new SignMessageModalViewModel();
   window.TESTNET_BURN_MODAL = new TestnetBurnModalViewModel();
@@ -129,6 +130,7 @@ function initBalances() {
   ko.applyBindings(CREATE_NEW_ADDRESS_MODAL, document.getElementById("createNewAddressModal"));
   ko.applyBindings(SEND_MODAL, document.getElementById("sendModal"));
   ko.applyBindings(CREATE_DISPENSER_MODAL, document.getElementById("dispenserModal"));
+  ko.applyBindings(MELT_MODAL, document.getElementById("meltModal"));
   ko.applyBindings(SWEEP_MODAL, document.getElementById("sweepModal"));
   ko.applyBindings(SIGN_MESSAGE_MODAL, document.getElementById("signMessageModal"));
   ko.applyBindings(TESTNET_BURN_MODAL, document.getElementById("testnetBurnModal"));
