@@ -134,7 +134,7 @@
                   <ul class="dropdown-menu" role="menu">
                     <li><a data-bind="visible: !$parent.IS_WATCH_ONLY, click: send, locale: 'send'" href="#"></a></li>
                     <li><a data-bind="visible: !$parent.IS_WATCH_ONLY && !isBTC(), click: createDispenser, locale: 'create_dispenser'" href="#"></a></li>
-                    <li><a data-bind="visible: !$parent.IS_WATCH_ONLY && !isBTC() && !isXCP(), click: melt, locale: 'melt'" href="#"></a></li>
+                    <li><a data-bind="visible: !$parent.IS_WATCH_ONLY && !isBTC() && !isXCP(), click: melt, locale: 'melt_asset'" href="#"></a></li>
                     <li><a data-bind="visible: !isBTC() && !isXCP(), click: showInfo, locale: 'show_info'" href="#"></a></li>
                     <li data-bind="visible: !$parent.IS_WATCH_ONLY && isBTC()"><a data-bind="click: testnetBurn, locale: 'burn_for_xcp'" href="#"></a></li>
                     <li data-bind="visible: !$parent.IS_WATCH_ONLY && isMine() && !locked()"><a data-bind="click: issueAdditional, locale: 'issue_additional'" href="#"></a></li>

@@ -902,7 +902,7 @@ function MeltAssetModalViewModel() {
 
   self.maxAmount = function() {
     assert(self.normalizedBalance(), "No balance present?");
-    self.give_quantity(self.normalizedBalance());
+    self.meltQuantity(self.normalizedBalance());
   }
 
   self.doAction = function() {

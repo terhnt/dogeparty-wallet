@@ -113,7 +113,6 @@ function initBalances() {
   window.CREATE_NEW_ADDRESS_MODAL = new CreateNewAddressModalViewModel();
   window.SEND_MODAL = new SendModalViewModel();
   window.CREATE_DISPENSER_MODAL = new CreateDispenserModalViewModel();
-  window.MELT_MODAL = new MeltAssetModalViewModel();
   window.SWEEP_MODAL = new SweepModalViewModel();
   window.SIGN_MESSAGE_MODAL = new SignMessageModalViewModel();
   window.TESTNET_BURN_MODAL = new TestnetBurnModalViewModel();
@@ -121,6 +120,7 @@ function initBalances() {
   window.BROADCAST_MODAL = new BroadcastModalViewModel();
   window.SIGN_TRANSACTION_MODAL = new SignTransactionModalViewModel();
   window.ARMORY_BROADCAST_TRANSACTION = new ArmoryBroadcastTransactionModalViewModel();
+  window.MELT_MODAL = new MeltAssetModalViewModel();
 
   ko.applyBindings({}, document.getElementById("balanceHeader"));
   ko.applyBindings({}, document.getElementById("alertBuyXcp"));
@@ -130,7 +130,6 @@ function initBalances() {
   ko.applyBindings(CREATE_NEW_ADDRESS_MODAL, document.getElementById("createNewAddressModal"));
   ko.applyBindings(SEND_MODAL, document.getElementById("sendModal"));
   ko.applyBindings(CREATE_DISPENSER_MODAL, document.getElementById("dispenserModal"));
-  ko.applyBindings(MELT_MODAL, document.getElementById("meltModal"));
   ko.applyBindings(SWEEP_MODAL, document.getElementById("sweepModal"));
   ko.applyBindings(SIGN_MESSAGE_MODAL, document.getElementById("signMessageModal"));
   ko.applyBindings(TESTNET_BURN_MODAL, document.getElementById("testnetBurnModal"));
@@ -164,6 +163,7 @@ function initBalances() {
   ko.applyBindings(CHANGE_ASSET_DESCRIPTION_MODAL, document.getElementById("changeAssetDescriptionModal"));
   ko.applyBindings(PAY_DIVIDEND_MODAL, document.getElementById("payDividendModal"));
   ko.applyBindings(SHOW_ASSET_INFO_MODAL, document.getElementById("showAssetInfoModal"));
+  ko.applyBindings(MELT_MODAL, document.getElementById("meltModal"));
 
   $(document).ready(function() {
     //Some misc jquery event handlers
