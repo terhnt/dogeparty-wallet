@@ -433,6 +433,7 @@ function CreateAssetModalViewModel() {
       if (data[i]['quantity'] !== null && data[i]['quantity'] !== 0)
         self.availableDividendAssets.push(new BackingAssetInDropdownItemModel(data[i]['asset'], data[i]['asset_longname'] || data[i]['asset'], data[i]['quantity'], data[i]['normalized_quantity']));
     }
+    });
 
   self.hide = function() {
     self.shown(false);
