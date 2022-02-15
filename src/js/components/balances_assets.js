@@ -57,6 +57,28 @@ function CreateAssetModalViewModel() {
     }
   );
 
+  self.name = ko.observable('').extend({
+    required: true,
+    isValidAssetName: self,
+    assetNameIsTaken: self
+  });
+  self.selectedParentAsset = ko.observable('');
+  self.description = ko.observable('').extend({
+    required: false
+  });
+  self.divisible = ko.observable(false);
+  self.meltable = ko.observable(false);
+  self.backing = ko.observable(0).extend({
+    required: self.meltable(),
+    isValidPositiveQuantityOrZero: self
+  });
+  self.backing_asset = ko.observable('XUP');
+  self.quantity = ko.observable().extend({
+    required: true,
+    isValidPositiveQuantityOrZero: self,
+    isValidQtyForDivisibility: self
+  });
+
   self.backingAssetName = ko.observable('').extend({
     required: self.meltable(),
     assetNameExists: self,
@@ -176,27 +198,6 @@ function CreateAssetModalViewModel() {
     return smartFormat(self.backingAssetBalRemainingPostPay());
   }, self);
 
-  self.name = ko.observable('').extend({
-    required: true,
-    isValidAssetName: self,
-    assetNameIsTaken: self
-  });
-  self.selectedParentAsset = ko.observable('');
-  self.description = ko.observable('').extend({
-    required: false
-  });
-  self.divisible = ko.observable(false);
-  self.meltable = ko.observable(false);
-  self.backing = ko.observable(0).extend({
-    required: self.meltable,
-    isValidPositiveQuantity: self
-  });
-  self.backing_asset = ko.observable('XUP');
-  self.quantity = ko.observable().extend({
-    required: true,
-    isValidPositiveQuantityOrZero: self,
-    isValidQtyForDivisibility: self
-  });
   self.feeOption = ko.observable('optimal');
   self.customFee = ko.observable(null).extend({
     validation: [{
@@ -378,7 +379,7 @@ function CreateAssetModalViewModel() {
     trackEvent('Assets', 'CreateAsset');
   }
 
-  if(self.meltable === false){
+  if(self.meltable() === false){
     self.backing = 0;
     self.backing_asset = 'XUP';
   }
