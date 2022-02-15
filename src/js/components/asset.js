@@ -10,6 +10,8 @@ function AssetViewModel(props) {
 
   self.DIVISIBLE = props['divisible'] !== undefined ? props['divisible'] : true;
   self.MELTABLE = props['meltable'] !== undefined ? props['meltable'] : false;
+  self.BACKING_ASSET = props['backing'] !== undefined ? props['backing'] : 'XUP';
+  self.BACKING = props['backing'] !== undefined ? props['backing_asset'] : 0;
   self.owner = ko.observable(props['owner']);
   self.locked = ko.observable(props['locked'] !== undefined ? props['locked'] : false);
   self.rawBalance = ko.observable(props['rawBalance'] || (self.ASSET === KEY_ASSET.BTC ? null : 0));
@@ -184,7 +186,10 @@ function AssetViewModel(props) {
                 asset: self.ASSET,
                 divisible: self.DIVISIBLE,
                 description: 'LOCK',
-                transfer_destination: null
+                transfer_destination: null,
+                meltable: self.MELTABLE,
+                backing: self.BACKING,
+                backing_asset: self.BACKING_ASSET
               },
               function(txHash, data, endpoint, addressType, armoryUTx) {
                 var message = i18n.t("no_more_token_may_issued");

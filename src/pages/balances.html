@@ -780,11 +780,66 @@
             <div class="col col-sm-3"></div>
             <div class="col col-sm-9">
               <label class="checkbox">
-                <input name="assetDivisible" type="checkbox" data-bind="checked: divisible">
+                <input name="assetDivisible" type="checkbox" data-bind="unchecked: divisible">
                 <i></i><span data-bind="locale: 'make_divisible'"></span>
               </label>
               <div class="note" data-bind="locale: 'make_divisible_note'"></div>
           </div></section>
+
+          <!-- Meltable create asset -->
+          <section><div class="row">
+            <div class="col col-sm-3"></div>
+            <div class="col col-sm-9">
+              <label class="checkbox">
+                <input name="assetMeltable" type="checkbox" data-bind="unchecked: meltable">
+                <i></i><span data-bind="locale: 'make_meltable'"></span>
+              </label>
+              <div class="note" data-bind="locale: 'make_meltable_note'"></div>
+          </div></section>
+
+<!--
+          <section><div class="row">
+            <label class="control-label col col-sm-3" data-bind="locale: 'backing_quantity'"></label>
+            <div class="col col-sm-9">
+                <label class="input"><i class="icon-append fa fa-plus"></i>
+                    <input name="assetBackingQuantity"  data-bind="value: backing, valueUpdate: 'input'" type="text"/>
+                    <span>&nbsp;&nbsp;<button type="button" data-bind="click: maxAmount, locale: 'max'" class="btn btn-default btn-sm"></button></span>
+                </label>
+                <div class="note" data-bind="locale: 'backing_quantity_note'"></div>
+            </div>
+          </div></section> -->
+
+          <section><div class="row">
+            <label class="control-label col col-sm-3" data-bind="locale: 'backing_asset'"></label>
+            <div class="col col-sm-9">
+                <label class="input">
+                    <select id="selectedBackingAsset" class="width-max" data-bind="options: availableBackingAssets, optionsValue: 'ASSET', optionsText: 'SELECT_LABEL', select2: { minimumResultsForSearch: 10, escapeMarkup: 'direct' }, value: selectedBackingAsset"></select>
+                </label>
+                <div class="note" data-bind="locale: 'backing_asset_note'"></div>
+            </div>
+          </div></section>
+
+          <section><div class="row">
+            <label class="control-label col col-sm-3" data-bind="locale: 'backing_per_unit'"></label>
+            <div class="col col-sm-9">
+                <label class="input"><i class="icon-append fa fa-plus"></i>
+                    <input name="quantityPerUnitBA" data-bind="value: quantityPerUnitBA, valueUpdate : 'input'" type="text"/>
+                </label>
+                <div class="note" data-bind="locale: 'backing_unit_note', localeArgs: backingAssetName"></div>
+            </div>
+          </div></section>
+
+<!--
+          <section><div class="row">
+            <label class="control-label col col-sm-3" data-bind="locale: 'backing_asset'"></label>
+            <div class="col col-sm-9">
+                <label class="input"><i class="icon-append fa fa-info"></i>
+                    <input name="assetBacking" data-bind="value: backing_asset, valueUpdate: 'input'"/>
+                </label>
+                <div class="note" data-bind="locale: 'backing_asset_note'"></div>
+            </div>
+          </div></section>
+          -->
 
           <section><!-- fee section -->
             <div class="row">

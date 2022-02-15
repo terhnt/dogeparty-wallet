@@ -2,6 +2,14 @@ var ParentAssetInDropdownItemModel = function(asset) {
   this.ASSET = asset;
 };
 
+var BackingAssetInDropdownItemModel = function(asset, assetDisp, rawBalance, normalizedBalance) {
+  this.ASSET = asset;
+  this.ASSET_DISP = assetDisp;
+  this.RAW_BALANCE = rawBalance; //raw
+  this.NORMALIZED_BALANCE = normalizedBalance; //normalized
+  this.SELECT_LABEL = assetDisp + " (" + i18n.t('bal') + ": " + normalizedBalance + ")";
+};
+
 function createCreateAssetKnockoutValidators() {
   ko.validation.rules['assetNameIsTaken'] = {
     async: true,
@@ -31,6 +39,9 @@ function CreateAssetModalViewModel() {
   createCreateAssetKnockoutValidators();
 
   self.shown = ko.observable(false);
+  self.addressVM = ko.observable(null); // SOURCE address view model(supplied)
+  self.assetData = ko.observable(null);
+  self.holderCount = ko.observable(null);
   self.address = ko.observable('');
   self.xcpBalance = ko.observable(0);
 
@@ -46,6 +57,125 @@ function CreateAssetModalViewModel() {
     }
   );
 
+  self.backingAssetName = ko.observable('').extend({
+    required: true,
+    assetNameExists: self,
+    rateLimit: {timeout: 500, method: "notifyWhenChangesStop"},
+    validation: {
+      validator: function(val, self) {
+        if (!self.assetData()) return true; //wait until backing asset chosen to validate
+
+        var supply = new Decimal(normalizeQuantity(self.assetData().supply, self.assetData().divisible));
+        // we substract user balance for this asset
+        var userAsset = self.addressVM().getAssetObj(self.backingAssetName());
+        if (userAsset) {
+          supply = supply.sub(new Decimal(userAsset.normalizedBalance()));
+        }
+        return supply > 0
+      },
+      message: i18n.t('no_backing_to_distribute'),
+      params: self
+    }
+  });
+
+  self.backingAssetName.subscribe(function(name) {
+    if (!name) return;
+    failoverAPI("get_assets_info", {'assetsList': [name]}, function(assetsData, endpoint) {
+      if (USE_TESTNET || USE_REGTEST || WALLET.networkBlockHeight() > 330000) {
+        failoverAPI('get_holder_count', {'asset': name}, function(holderData) {
+          self.assetData(assetsData[0]);
+          self.holderCount(holderData[name]);
+          var userAsset = self.addressVM().getAssetObj(name);
+          if (userAsset && userAsset.normalizedBalance() > 0) {
+            self.holderCount(self.holderCount() - 1);
+          }
+        });
+      } else {
+        self.assetData(assetsData[0]);
+        self.holderCount(0);
+      }
+    });
+  });
+
+  self.availableBackingAssets = ko.observableArray([]);
+  self.selectedBackingAsset = ko.observable(null).extend({ //Melts are paid IN (i.e. with) this asset
+    required: true
+  });
+  self.selectedBackingAssetDivisibility = ko.observableArray(null);
+  self.dispSelectedBackingAsset = ko.observableArray('');
+  self.selectedBackingAsset.subscribe(function(asset) {
+    self.selectedBackingAssetDivisibility(WALLET.isAssetDivisibilityAvailable(asset) == 0 ? false : true); // asset divisibility should be available..
+    if(self.addressVM()) {
+      self.dispSelectedBackingAsset(self.addressVM().getAssetObj(asset).ASSET_LONGNAME);
+    }
+  });
+
+  self.quantityPerUnitBA = ko.observable('').extend({
+    required: true,
+    isValidPositiveQuantity: self,
+    validation: [{
+      validator: function(val, self) {
+        if (self.backingAssetBalRemainingPostPay() === null) return true; //wait until backing asset chosen to validate
+        return self.backingAssetBalRemainingPostPay() >= 0;
+      },
+      message: i18n.t('total_backing_exceed_balance'),
+      params: self
+    }, {
+      validator: function(val, self) {
+        if (!self.selectedBackingAsset()) return true;
+        if (!self.selectedBackingAssetDivisibility()) {
+          return parseFloat(val) % 1 == 0;
+        } else {
+          return true;
+        }
+      },
+      message: i18n.t('nodivisible_amount_incorrect'),
+      params: self
+    }]
+  });
+
+  self.totalPay = ko.computed(function() {
+    if (!self.assetData() || !isNumber(self.quantityPerUnitBA()) || !parseFloat(self.quantityPerUnitBA())) return null;
+
+    var supply = new Decimal(normalizeQuantity(self.assetData().supply, self.assetData().divisible));
+    // we substract user balance for this asset
+    var userAsset = self.addressVM().getAssetObj(self.backingAssetName());
+    if (userAsset) {
+      supply = supply.sub(new Decimal(userAsset.normalizedBalance()));
+    }
+    var totalPay = new Decimal(self.quantityPerUnitBA()).mul(supply);
+
+    return Decimal.round(totalPay, 8, Decimal.MidpointRounding.ToEven).toFloat();
+
+  }, self);
+
+  self.totalFee = ko.computed(function() {
+    if (!self.holderCount() || !isNumber(self.quantityPerUnitBA()) || !parseFloat(self.quantityPerUnitBA())) return null;
+    return mulFloat(self.holderCount(), DIVIDEND_FEE_PER_HOLDER);
+  });
+
+  self.dispTotalPay = ko.computed(function() {
+    return smartFormat(self.totalPay());
+  }, self);
+
+  self.dispTotalFee = ko.computed(function() {
+    return smartFormat(self.totalFee());
+  }, self);
+
+  self.backingAssetBalance = ko.computed(function() {
+    if (!self.selectedBackingAsset()) return null;
+    return WALLET.getBalance(self.addressVM().ADDRESS, self.selectedBackingAsset()); //normalized
+  }, self);
+
+  self.backingAssetBalRemainingPostPay = ko.computed(function() {
+    if (!self.assetData() || self.backingAssetBalance() === null || self.totalPay() === null) return null;
+    return Decimal.round(new Decimal(self.backingAssetBalance()).sub(self.totalPay()), 8, Decimal.MidpointRounding.ToEven).toFloat();
+  }, self);
+
+  self.dispBackingAssetBalRemainingPostPay = ko.computed(function() {
+    return smartFormat(self.backingAssetBalRemainingPostPay());
+  }, self);
+
   self.name = ko.observable('').extend({
     required: true,
     isValidAssetName: self,
@@ -55,7 +185,13 @@ function CreateAssetModalViewModel() {
   self.description = ko.observable('').extend({
     required: false
   });
-  self.divisible = ko.observable(true);
+  self.divisible = ko.observable(false));
+  self.meltable = ko.observable(false);
+  self.backing = ko.observable(0).extend({
+    required: self.meltable,
+    isValidPositiveQuantity: self
+  });
+  self.backing_asset = ko.observable('XUP');
   self.quantity = ko.observable().extend({
     required: true,
     isValidPositiveQuantityOrZero: self,
@@ -134,6 +270,9 @@ function CreateAssetModalViewModel() {
     name: self.name,
     description: self.description,
     quantity: self.quantity,
+    quantityPerUnitBA: self.quantityPerUnitBA,
+    selectedBackingAsset: self.selectedBackingAsset,
+    backingAssetName: self.backingAssetName,
     customFee: self.customFee
   });
 
@@ -145,10 +284,16 @@ function CreateAssetModalViewModel() {
   self.resetForm = function() {
     self.name('');
     self.description('');
-    self.divisible(true);
+    self.divisible(false);
     self.quantity(null);
+    self.backing(0);
+    self.backing_asset('XUP');
+    self.meltable(false);
     self.feeOption('optimal');
     self.customFee(null);
+    self.quantityPerUnitBA(null);
+    self.availableBackingAssets([]);
+    self.selectedBackingAsset(null);
     self.validationModel.errors.showAllMessages(false);
     self.feeController.reset();
   }
@@ -221,13 +366,23 @@ function CreateAssetModalViewModel() {
   }
 
   self.buildCreateAssetTransactionData = function() {
+
     var quantity = parseFloat(self.quantity());
     var rawQuantity = denormalizeQuantity(quantity, self.divisible());
+
+    //var bAsset = self.addressVM().getAssetObj(self.backing_asset);
+    //var bAssetQty = parseFloat(self.backing);
+    //var rawBAssetQty = denormalizeQuantity(bAssetQty, bAsset.DIVISIBLE);
 
     if (rawQuantity > MAX_INT) {
       bootbox.alert(i18n.t("issuance_quantity_too_high"));
       return false;
     }
+
+    //if(rawBAssetQty > MAX_INT) {
+    //  bootbox.alert(i18n.t("backing_quantity_too_high"));
+    //  return false;
+    //}
 
     var name = self.name();
     if(self.tokenNameType() === 'subasset' && self.selectedParentAsset()) {
@@ -241,6 +396,9 @@ function CreateAssetModalViewModel() {
       divisible: self.divisible(),
       description: self.description(),
       transfer_destination: null,
+      meltable: self.meltable(),
+      backing: denormalizeQuantity(parseFloat(self.quantityPerUnitBA())),
+      backing_asset: self.selectedBackingAsset(),
       _fee_option: 'custom',
       _custom_fee: self.feeController.getCustomFee()
     }
@@ -249,7 +407,7 @@ function CreateAssetModalViewModel() {
   // mix in shared fee calculation functions
   self.feeController = CWFeeModelMixin(self, {
     action: "create_issuance",
-    transactionParameters: [self.tokenNameType, self.name, self.description, self.divisible, self.quantity],
+    transactionParameters: [self.tokenNameType, self.name, self.description, self.divisible, self.quantity, self.meltable, self.backing, self.backing_asset],
     validTransactionCheck: function() {
       return self.validationModel.isValid();
     },
@@ -267,6 +425,14 @@ function CreateAssetModalViewModel() {
     self.shown(true);
     trackDialogShow('CreateAsset');
   }
+
+  //Get the balance of ALL assets at this address
+  $.jqlog.debug('Updating normalized balances for a single address at balance_assets ' + address.ADDRESS)
+  failoverAPI("get_normalized_balances", {'addresses': [address.ADDRESS]}, function(data, endpoint) {
+    for (var i = 0; i < data.length; i++) {
+      if (data[i]['quantity'] !== null && data[i]['quantity'] !== 0)
+        self.availableDividendAssets.push(new BackingAssetInDropdownItemModel(data[i]['asset'], data[i]['asset_longname'] || data[i]['asset'], data[i]['quantity'], data[i]['normalized_quantity']));
+    }
 
   self.hide = function() {
     self.shown(false);
@@ -349,6 +515,9 @@ function IssueAdditionalAssetModalViewModel() {
         divisible: self.asset().DIVISIBLE,
         description: self.asset().description(),
         transfer_destination: null,
+        meltable: self.asset().MELTABLE,
+        backing: self.asset().BACKING,
+        backing_asset: self.asset().BACKING_ASSET,
         _fee_option: 'custom',
         _custom_fee: self.feeController.getCustomFee()
     }
@@ -436,6 +605,9 @@ function TransferAssetModalViewModel() {
         divisible: self.asset().DIVISIBLE,
         description: self.asset().description(),
         transfer_destination: self.destAddress(),
+        meltable: self.asset().MELTABLE,
+        backing: self.asset().BACKING,
+        backing_asset: self.asset().BACKING_ASSET,
         _fee_option: 'custom',
         _custom_fee: self.feeController.getCustomFee()
       }
@@ -531,6 +703,9 @@ function ChangeAssetDescriptionModalViewModel() {
       divisible: self.asset().DIVISIBLE,
       description: self.newDescription(),
       transfer_destination: null,
+      meltable: self.asset().MELTABLE,
+      backing: self.asset().BACKING,
+      backing_asset: self.asset().BACKING_ASSET,
       _fee_option: 'custom',
       _custom_fee: self.feeController.getCustomFee()
     }
