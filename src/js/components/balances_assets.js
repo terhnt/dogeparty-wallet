@@ -69,7 +69,7 @@ function CreateAssetModalViewModel() {
   self.divisible = ko.observable(false);
   self.meltable = ko.observable(false);
   self.backing = ko.observable(0).extend({
-    required: self.meltable(),
+    required: self.isMeltable(),
     isValidPositiveQuantityOrZero: self
   });
   self.backing_asset = ko.observable('XUP');
@@ -80,7 +80,7 @@ function CreateAssetModalViewModel() {
   });
 
   self.backingAssetName = ko.observable('').extend({
-    required: self.meltable(),
+    required: self.isMeltable(),
     assetNameExists: self,
     rateLimit: {timeout: 500, method: "notifyWhenChangesStop"},
     validation: {
@@ -121,7 +121,7 @@ function CreateAssetModalViewModel() {
 
   self.availableBackingAssets = ko.observableArray([]);
   self.selectedBackingAsset = ko.observable(null).extend({ //Melts are paid IN (i.e. with) this asset
-    required: self.meltable()
+    required: self.isMeltable()
   });
   self.selectedBackingAssetDivisibility = ko.observableArray(null);
   self.dispSelectedBackingAsset = ko.observableArray('');
@@ -132,8 +132,18 @@ function CreateAssetModalViewModel() {
     }
   });
 
+  self.backingAssetBalance = ko.computed(function() {
+    if (!self.selectedBackingAsset()) return null;
+    return WALLET.getBalance(self.addressVM().ADDRESS, self.selectedBackingAsset()); //normalized
+  }, self);
+
+  self.backingAssetBalRemainingPostPay = ko.computed(function() {
+    if (!self.assetData() || self.backingAssetBalance() === null || self.totalPay() === null) return null;
+    return Decimal.round(new Decimal(self.backingAssetBalance()).sub(self.totalPay()), 8, Decimal.MidpointRounding.ToEven).toFloat();
+  }, self);
+
   self.quantityPerUnitBA = ko.observable('').extend({
-    required: true,
+    required: false,
     isValidPositiveQuantity: self,
     validation: [{
       validator: function(val, self) {
@@ -182,16 +192,6 @@ function CreateAssetModalViewModel() {
 
   self.dispTotalFee = ko.computed(function() {
     return smartFormat(self.totalFee());
-  }, self);
-
-  self.backingAssetBalance = ko.computed(function() {
-    if (!self.selectedBackingAsset()) return null;
-    return WALLET.getBalance(self.addressVM().ADDRESS, self.selectedBackingAsset()); //normalized
-  }, self);
-
-  self.backingAssetBalRemainingPostPay = ko.computed(function() {
-    if (!self.assetData() || self.backingAssetBalance() === null || self.totalPay() === null) return null;
-    return Decimal.round(new Decimal(self.backingAssetBalance()).sub(self.totalPay()), 8, Decimal.MidpointRounding.ToEven).toFloat();
   }, self);
 
   self.dispBackingAssetBalRemainingPostPay = ko.computed(function() {
