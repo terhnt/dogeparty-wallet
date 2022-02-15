@@ -185,7 +185,7 @@ function CreateAssetModalViewModel() {
   self.description = ko.observable('').extend({
     required: false
   });
-  self.divisible = ko.observable(false));
+  self.divisible = ko.observable(false);
   self.meltable = ko.observable(false);
   self.backing = ko.observable(0).extend({
     required: self.meltable,

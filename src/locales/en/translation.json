@@ -589,6 +589,7 @@
   "info_for_asset": "Info for <b>%s</b> (Read Only)",
   "pay_distribution": "Pay Distribution",
   "distribution_per_unit": "Distribution per Unit",
+  "backing_per_unit": "Backing per Unit",
   "distribution_unit_note": "Enter the quantity of the Distribution Token that should be distributed per share of %s.",
   "backing_unit_note": "Enter the quantity of the Backing Token that should be stored in each %s.",
   "distribution_token": "Distribution Token",
