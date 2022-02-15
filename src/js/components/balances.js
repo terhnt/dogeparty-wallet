@@ -852,7 +852,7 @@ function MeltAssetModalViewModel() {
     }
   });
 
-  self.quantity = ko.observable().extend({
+  self.meltQuantity = ko.observable().extend({
     required: true,
     isValidPositiveQuantity: self,
     isValidQtyForDivisibility: self,
@@ -879,12 +879,12 @@ function MeltAssetModalViewModel() {
 
   self.validationModel = ko.validatedObservable({
     asset: self.asset,
-    quantity: self.quantity,
+    quantity: self.meltQuantity,
     customFee: self.customFee,
   });
 
   self.resetForm = function() {
-    self.quantity(null);
+    self.meltQuantity(null);
 
     self.feeController.reset();
 
@@ -920,7 +920,7 @@ function MeltAssetModalViewModel() {
     params = {
       source: self.address(),
       asset: self.asset(),
-      quantity: denormalizeQuantity(parseFloat(self.quantity()), self.divisible()),
+      quantity: denormalizeQuantity(parseFloat(self.meltQuantity()), self.divisible()),
       _fee_option: 'custom',
       _custom_fee: self.feeController.getCustomFee()
     };
@@ -931,7 +931,7 @@ function MeltAssetModalViewModel() {
     // mix in shared fee calculation functions
   self.feeController = CWFeeModelMixin(self, {
     action: "create_melt",
-    transactionParameters: [self.address, self.asset, self.quantity],
+    transactionParameters: [self.address, self.asset, self.meltQuantity],
     validTransactionCheck: function() {
       return self.validationModel.isValid();
     },

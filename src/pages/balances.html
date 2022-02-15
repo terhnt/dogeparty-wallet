@@ -1338,12 +1338,12 @@
           <section><div class="row">
             <label class="control-label col col-sm-3" data-bind="locale: 'melt_qty'"></label>
             <div class="col col-sm-9">
-                <label id="quantityLabel" class="input inline-block">
+                <label id="meltQuantityLabel" class="input inline-block">
                     <i class="icon-append fa fa-share"></i>
-                    <input name="quantity" data-bind="value: quantity, valueUpdate: 'input', localeAttr: {'placeholder': 'quantity'}" type="text"/>
+                    <input name="meltQuantity" data-bind="value: meltQuantity, valueUpdate: 'input', localeAttr: {'placeholder': 'melt_qty'}" type="text"/>
                 </label>
                 <span>&nbsp;&nbsp;<button type="button" data-bind="click: maxAmount, locale: 'max'" class="btn btn-default btn-sm"></button></span>
-                <span class="invalid" data-bind="validationMessage: quantity"></span>
+                <span class="invalid" data-bind="validationMessage: meltQuantity"></span>
             </div>
           </div></section>
 

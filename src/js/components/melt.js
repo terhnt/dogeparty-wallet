@@ -9,7 +9,7 @@ function MeltViewModel(props) { //DispenserViewModel(props) {
   self.DIVISIBLE = props['divisible'] !== undefined ? props['divisible'] : true;
   self.description = ko.observable(props['description'] || '');
 
-  self.quantity = ko.observable(props['quantity'])
+  self.meltQuantity = ko.observable(props['quantity'])
   //self.rawEscrowedBalance = ko.observable(props['rawEscrowedBalance'])
   //self.escrowedBalance = ko.observable(props['escrowedBalance'])
   //self.rawGiveRemaining = ko.observable(props['rawGiveRemaining'])
@@ -51,7 +51,7 @@ function MeltViewModel(props) { //DispenserViewModel(props) {
               {
                 source: self.ADDRESS,
                 asset: self.ASSET,
-                quantity: self.quantity
+                quantity: self.meltQuantity
               },
               function(txHash, data, endpoint, addressType, armoryUTx) {
                 var message = i18n.t("can_dispense_before_closing");
