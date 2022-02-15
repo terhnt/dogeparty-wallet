@@ -69,7 +69,7 @@ function CreateAssetModalViewModel() {
   self.divisible = ko.observable(false);
   self.meltable = ko.observable(false);
   self.backing = ko.observable(0).extend({
-    required: self.isMeltable(),
+    required: false,
     isValidPositiveQuantityOrZero: self
   });
   self.backing_asset = ko.observable('XUP');
@@ -80,7 +80,7 @@ function CreateAssetModalViewModel() {
   });
 
   self.backingAssetName = ko.observable('').extend({
-    required: self.isMeltable(),
+    required: false,
     assetNameExists: self,
     rateLimit: {timeout: 500, method: "notifyWhenChangesStop"},
     validation: {
@@ -121,7 +121,7 @@ function CreateAssetModalViewModel() {
 
   self.availableBackingAssets = ko.observableArray([]);
   self.selectedBackingAsset = ko.observable(null).extend({ //Melts are paid IN (i.e. with) this asset
-    required: self.isMeltable()
+    required: false
   });
   self.selectedBackingAssetDivisibility = ko.observableArray(null);
   self.dispSelectedBackingAsset = ko.observableArray('');
