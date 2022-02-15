@@ -58,7 +58,7 @@ function CreateAssetModalViewModel() {
   );
 
   self.backingAssetName = ko.observable('').extend({
-    required: true,
+    required: self.meltable(),
     assetNameExists: self,
     rateLimit: {timeout: 500, method: "notifyWhenChangesStop"},
     validation: {
@@ -99,7 +99,7 @@ function CreateAssetModalViewModel() {
 
   self.availableBackingAssets = ko.observableArray([]);
   self.selectedBackingAsset = ko.observable(null).extend({ //Melts are paid IN (i.e. with) this asset
-    required: true
+    required: self.meltable()
   });
   self.selectedBackingAssetDivisibility = ko.observableArray(null);
   self.dispSelectedBackingAsset = ko.observableArray('');
@@ -209,6 +209,7 @@ function CreateAssetModalViewModel() {
     isValidCustomFeeIfSpecified: self
   });
 
+/* Double up of code??
   self.hasXCPForNamedAsset = ko.computed(function() {
     return self.xcpBalance() >= ASSET_CREATION_FEE_XCP;
   });
@@ -233,6 +234,7 @@ function CreateAssetModalViewModel() {
 
     return ownedAssets;
   }, self);
+*/
 
   self.feeOption.subscribeChanged(function(newValue, prevValue) {
     if(newValue !== 'custom') {
@@ -266,15 +268,26 @@ function CreateAssetModalViewModel() {
     return ownedAssets;
   }, self);
 
-  self.validationModel = ko.validatedObservable({
-    name: self.name,
-    description: self.description,
-    quantity: self.quantity,
-    quantityPerUnitBA: self.quantityPerUnitBA,
-    selectedBackingAsset: self.selectedBackingAsset,
-    backingAssetName: self.backingAssetName,
-    customFee: self.customFee
-  });
+
+  if(self.meltable()){
+    self.validationModel = ko.validatedObservable({
+      name: self.name,
+      description: self.description,
+      quantity: self.quantity,
+      quantityPerUnitBA: self.quantityPerUnitBA,
+      selectedBackingAsset: self.selectedBackingAsset,
+      backingAssetName: self.backingAssetName,
+      customFee: self.customFee
+    });
+  }else{
+    self.validationModel = ko.validatedObservable({
+      name: self.name,
+      description: self.description,
+      quantity: self.quantity,
+      customFee: self.customFee
+    });
+  }
+
 
   self.generateRandomId = function() {
     var r = bigInt.randBetween(NUMERIC_ASSET_ID_MIN, NUMERIC_ASSET_ID_MAX);
@@ -365,10 +378,24 @@ function CreateAssetModalViewModel() {
     trackEvent('Assets', 'CreateAsset');
   }
 
+  if(self.meltable === false){
+    self.backing = 0;
+    self.backing_asset = 'XUP';
+  }
+
   self.buildCreateAssetTransactionData = function() {
 
     var quantity = parseFloat(self.quantity());
     var rawQuantity = denormalizeQuantity(quantity, self.divisible());
+
+    var a_backing = 0;
+    var a_backing_asset = 'XUP';
+
+
+    if(self.meltable() === true){
+      a_backing = denormalizeQuantity(parseFloat(self.quantityPerUnitBA()));
+      a_backing_asset = self.selectedBackingAsset();
+    }
 
     //var bAsset = self.addressVM().getAssetObj(self.backing_asset);
     //var bAssetQty = parseFloat(self.backing);
@@ -397,8 +424,8 @@ function CreateAssetModalViewModel() {
       description: self.description(),
       transfer_destination: null,
       meltable: self.meltable(),
-      backing: denormalizeQuantity(parseFloat(self.quantityPerUnitBA())),
-      backing_asset: self.selectedBackingAsset(),
+      backing: a_backing,
+      backing_asset: a_backing_asset,
       _fee_option: 'custom',
       _custom_fee: self.feeController.getCustomFee()
     }
@@ -427,8 +454,8 @@ function CreateAssetModalViewModel() {
   }
 
   //Get the balance of ALL assets at this address
-  $.jqlog.debug('Updating normalized balances for a single address at balance_assets ' + address.ADDRESS)
-  failoverAPI("get_normalized_balances", {'addresses': [address.ADDRESS]}, function(data, endpoint) {
+  $.jqlog.debug('Updating normalized balances for a single address at balance_assets ' + self.address())
+  failoverAPI("get_normalized_balances", {'addresses': [self.address()]}, function(data, endpoint) {
     for (var i = 0; i < data.length; i++) {
       if (data[i]['quantity'] !== null && data[i]['quantity'] !== 0)
         self.availableDividendAssets.push(new BackingAssetInDropdownItemModel(data[i]['asset'], data[i]['asset_longname'] || data[i]['asset'], data[i]['quantity'], data[i]['normalized_quantity']));
