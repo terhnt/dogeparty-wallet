@@ -813,14 +813,14 @@
             <label class="control-label col col-sm-3" data-bind="locale: 'backing_asset'"></label>
             <div class="col col-sm-9">
                 <label class="input">
-                    <select id="selectedBackingAsset" class="width-max" data-bind="visible: meltable == true, options: availableBackingAssets, optionsValue: 'ASSET', optionsText: 'SELECT_LABEL', select2: { minimumResultsForSearch: 10, escapeMarkup: 'direct' }, value: selectedBackingAsset"></select>
+                    <select id="selectedBackingAsset" class="width-max" data-bind="options: availableBackingAssets, optionsValue: 'ASSET', optionsText: 'SELECT_LABEL', select2: { minimumResultsForSearch: 10, escapeMarkup: 'direct' }, value: selectedBackingAsset"></select>
                 </label>
                 <div class="note" data-bind="locale: 'backing_asset_note'"></div>
             </div>
           </div></section>
 
           <section><div class="row">
-            <label class="control-label col col-sm-3" data-bind="visible: meltable == true, locale: 'backing_per_unit'"></label>
+            <label class="control-label col col-sm-3" data-bind="locale: 'backing_per_unit'"></label>
             <div class="col col-sm-9">
                 <label class="input"><i class="icon-append fa fa-plus"></i>
                     <input name="quantityPerUnitBA" data-bind="value: quantityPerUnitBA, valueUpdate : 'input'" type="text"/>
