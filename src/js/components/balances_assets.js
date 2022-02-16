@@ -99,7 +99,7 @@ function CreateAssetModalViewModel() {
     isValidPositiveQuantityOrZero: self,
     isValidQtyForDivisibility: self
   });
-
+/*
   self.backingAssetName = ko.observable('').extend({
     required: false,
     assetNameExists: self,
@@ -139,7 +139,7 @@ function CreateAssetModalViewModel() {
       }
     });
   });
-
+*/
   self.availableBackingAssets = ko.observableArray([]);
   self.selectedBackingAsset = ko.observable(null).extend({ //Melts are paid IN (i.e. with) this asset
     required: false
@@ -180,9 +180,11 @@ function CreateAssetModalViewModel() {
   self.totalPay = ko.computed(function() {
     if (!self.assetData() || !isNumber(self.quantityPerUnitBA()) || !parseFloat(self.quantityPerUnitBA())) return null;
 
-    var supply = new Decimal(normalizeQuantity(self.assetData().supply, self.assetData().divisible));
+    //var supply = new Decimal(normalizeQuantity(self.assetData().supply, self.assetData().divisible));
+    var supply = new Decimal(normalizeQuantity(self.quantity(), self.divisible())) //Supply of new token
     // we substract user balance for this asset
-    var userAsset = self.addressVM().getAssetObj(self.backingAssetName());
+    //var userAsset = self.addressVM().getAssetObj(self.backingAssetName());
+    var userAsset = self.addressVM().getAssetObj(self.dispSelectedBackingAsset()); // Asset is selected asset
     if (userAsset) {
       supply = supply.sub(new Decimal(userAsset.normalizedBalance()));
     }
@@ -404,6 +406,12 @@ function CreateAssetModalViewModel() {
       a_backing = denormalizeQuantity(parseFloat(self.quantityPerUnitBA()));
       a_backing_asset = self.selectedBackingAsset();
     }
+
+    // compute the address string for the feeController mixin
+    self.address = ko.computed(function() {
+      var addressVM = self.addressVM()
+      return addressVM != null ? addressVM.ADDRESS : null;
+    })
 
     //var bAsset = self.addressVM().getAssetObj(self.backing_asset);
     //var bAssetQty = parseFloat(self.backing);
