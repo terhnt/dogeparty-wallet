@@ -36,7 +36,7 @@ function createCreateAssetKnockoutValidators() {
 }
 function CreateAssetModalViewModel() {
   var self = this;
-  console.log("This: " + self);
+  console.log(self);
   createCreateAssetKnockoutValidators();
 
   self.shown = ko.observable(false);
@@ -69,6 +69,26 @@ function CreateAssetModalViewModel() {
   });
   self.divisible = ko.observable(false);
   self.meltable = ko.observable(false);
+  self.meltable.subscribe(function(val) {
+    if(val){
+      self.validationModel = ko.validatedObservable({
+        name: self.name,
+        description: self.description,
+        quantity: self.quantity,
+        quantityPerUnitBA: self.quantityPerUnitBA,
+        selectedBackingAsset: self.selectedBackingAsset,
+        backingAssetName: self.backingAssetName,
+        customFee: self.customFee
+      });
+    }else{
+      self.validationModel = ko.validatedObservable({
+        name: self.name,
+        description: self.description,
+        quantity: self.quantity,
+        customFee: self.customFee
+      });
+    }
+  });
   self.backing = ko.observable(0).extend({
     required: false,
     isValidPositiveQuantityOrZero: self
@@ -138,7 +158,7 @@ function CreateAssetModalViewModel() {
     isValidPositiveQuantity: self,
     validation: [{
       validator: function(val, self) {
-        if ((self.backingAssetBalRemainingPostPay() === null) || (self.meltable() === true)) return true; //wait until backing asset chosen to validate
+        if ((self.backingAssetBalRemainingPostPay() === null)) return true; //wait until backing asset chosen to validate
         return self.backingAssetBalRemainingPostPay() >= 0;
       },
       message: i18n.t('total_backing_exceed_balance'),
@@ -270,26 +290,12 @@ function CreateAssetModalViewModel() {
     return ownedAssets;
   }, self);
 
-
-  if(self.meltable()){
-    self.validationModel = ko.validatedObservable({
-      name: self.name,
-      description: self.description,
-      quantity: self.quantity,
-      quantityPerUnitBA: self.quantityPerUnitBA,
-      selectedBackingAsset: self.selectedBackingAsset,
-      backingAssetName: self.backingAssetName,
-      customFee: self.customFee
-    });
-  }else{
-    self.validationModel = ko.validatedObservable({
-      name: self.name,
-      description: self.description,
-      quantity: self.quantity,
-      customFee: self.customFee
-    });
-  }
-
+  self.validationModel = ko.validatedObservable({
+    name: self.name,
+    description: self.description,
+    quantity: self.quantity,
+    customFee: self.customFee
+  });
 
   self.generateRandomId = function() {
     var r = bigInt.randBetween(NUMERIC_ASSET_ID_MIN, NUMERIC_ASSET_ID_MAX);
@@ -306,7 +312,7 @@ function CreateAssetModalViewModel() {
     self.meltable(false);
     self.feeOption('optimal');
     self.customFee(null);
-    self.quantityPerUnitBA(null);
+    self.quantityPerUnitBA(0);
     self.availableBackingAssets([]);
     self.selectedBackingAsset(null);
     self.validationModel.errors.showAllMessages(false);
@@ -380,7 +386,7 @@ function CreateAssetModalViewModel() {
     trackEvent('Assets', 'CreateAsset');
   }
 
-  if(self.meltable() === false){
+  if(!self.meltable()){
     self.backing(0);
     self.backing_asset('XUP');
   }
@@ -394,7 +400,7 @@ function CreateAssetModalViewModel() {
     var a_backing_asset = 'XUP';
 
 
-    if(self.meltable() === true){
+    if(self.meltable()){
       a_backing = denormalizeQuantity(parseFloat(self.quantityPerUnitBA()));
       a_backing_asset = self.selectedBackingAsset();
     }
