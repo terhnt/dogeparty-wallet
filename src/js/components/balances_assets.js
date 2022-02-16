@@ -36,6 +36,7 @@ function createCreateAssetKnockoutValidators() {
 }
 function CreateAssetModalViewModel() {
   var self = this;
+  console.log("This: " + self);
   createCreateAssetKnockoutValidators();
 
   self.shown = ko.observable(false);
@@ -132,22 +133,12 @@ function CreateAssetModalViewModel() {
     }
   });
 
-  self.backingAssetBalance = ko.computed(function() {
-    if (!self.selectedBackingAsset()) return null;
-    return WALLET.getBalance(self.addressVM().ADDRESS, self.selectedBackingAsset()); //normalized
-  }, self);
-
-  self.backingAssetBalRemainingPostPay = ko.computed(function() {
-    if (!self.assetData() || self.backingAssetBalance() === null || self.totalPay() === null) return null;
-    return Decimal.round(new Decimal(self.backingAssetBalance()).sub(self.totalPay()), 8, Decimal.MidpointRounding.ToEven).toFloat();
-  }, self);
-
   self.quantityPerUnitBA = ko.observable('').extend({
     required: false,
     isValidPositiveQuantity: self,
     validation: [{
       validator: function(val, self) {
-        if (self.backingAssetBalRemainingPostPay() === null) return true; //wait until backing asset chosen to validate
+        if ((self.backingAssetBalRemainingPostPay() === null) || (self.meltable() === true)) return true; //wait until backing asset chosen to validate
         return self.backingAssetBalRemainingPostPay() >= 0;
       },
       message: i18n.t('total_backing_exceed_balance'),
@@ -192,6 +183,16 @@ function CreateAssetModalViewModel() {
 
   self.dispTotalFee = ko.computed(function() {
     return smartFormat(self.totalFee());
+  }, self);
+
+  self.backingAssetBalance = ko.computed(function() {
+    if (!self.selectedBackingAsset()) return null;
+    return WALLET.getBalance(self.addressVM().ADDRESS, self.selectedBackingAsset()); //normalized
+  }, self);
+
+  self.backingAssetBalRemainingPostPay = ko.computed(function() {
+    if (!self.assetData() || self.backingAssetBalance() === null || self.totalPay() === null) return null;
+    return Decimal.round(new Decimal(self.backingAssetBalance()).sub(self.totalPay()), 8, Decimal.MidpointRounding.ToEven).toFloat();
   }, self);
 
   self.dispBackingAssetBalRemainingPostPay = ko.computed(function() {
@@ -380,8 +381,8 @@ function CreateAssetModalViewModel() {
   }
 
   if(self.meltable() === false){
-    self.backing = 0;
-    self.backing_asset = 'XUP';
+    self.backing(0);
+    self.backing_asset('XUP');
   }
 
   self.buildCreateAssetTransactionData = function() {
