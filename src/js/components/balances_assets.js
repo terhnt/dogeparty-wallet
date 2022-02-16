@@ -77,7 +77,6 @@ function CreateAssetModalViewModel() {
         quantity: self.quantity,
         quantityPerUnitBA: self.quantityPerUnitBA,
         selectedBackingAsset: self.selectedBackingAsset,
-        backingAssetName: self.backingAssetName,
         customFee: self.customFee
       });
     }else{
@@ -462,6 +461,7 @@ function CreateAssetModalViewModel() {
     if (resetForm) self.resetForm();
     self.xcpBalance(xcpBalance);
     self.address(address);
+    self.addressVM(address);
     self.tokenNameType('numeric');
     self.generateRandomId();
     $('#createAssetFeeOption').select2("val", self.feeOption()); //hack
