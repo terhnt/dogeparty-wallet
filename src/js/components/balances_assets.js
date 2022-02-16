@@ -70,7 +70,6 @@ function CreateAssetModalViewModel() {
   self.divisible = ko.observable(false);
   self.meltable = ko.observable(false);
   self.meltable.subscribe(function(val) {
-    console.log("Meltable Changed: " + val);
     if(val){
       self.validationModel = ko.validatedObservable({
         name: self.name,
@@ -467,7 +466,7 @@ function CreateAssetModalViewModel() {
   failoverAPI("get_normalized_balances", {'addresses': [self.address()]}, function(data, endpoint) {
     for (var i = 0; i < data.length; i++) {
       if (data[i]['quantity'] !== null && data[i]['quantity'] !== 0)
-        self.availableDividendAssets.push(new BackingAssetInDropdownItemModel(data[i]['asset'], data[i]['asset_longname'] || data[i]['asset'], data[i]['quantity'], data[i]['normalized_quantity']));
+        self.availableBackingAssets.push(new BackingAssetInDropdownItemModel(data[i]['asset'], data[i]['asset_longname'] || data[i]['asset'], data[i]['quantity'], data[i]['normalized_quantity']));
     }
     });
 
