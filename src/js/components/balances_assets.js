@@ -70,6 +70,7 @@ function CreateAssetModalViewModel() {
   self.divisible = ko.observable(false);
   self.meltable = ko.observable(false);
   self.meltable.subscribe(function(val) {
+    console.log("Meltable Changed: " + val);
     if(val){
       self.validationModel = ko.validatedObservable({
         name: self.name,
@@ -442,7 +443,7 @@ function CreateAssetModalViewModel() {
   // mix in shared fee calculation functions
   self.feeController = CWFeeModelMixin(self, {
     action: "create_issuance",
-    transactionParameters: [self.tokenNameType, self.name, self.description, self.divisible, self.quantity, self.meltable, self.backing, self.backing_asset],
+    transactionParameters: [self.tokenNameType, self.name, self.description, self.divisible, self.quantity, self.meltable(), self.backing(), self.backing_asset()],
     validTransactionCheck: function() {
       return self.validationModel.isValid();
     },
