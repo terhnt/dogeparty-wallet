@@ -442,7 +442,7 @@ function CreateAssetModalViewModel() {
   // mix in shared fee calculation functions
   self.feeController = CWFeeModelMixin(self, {
     action: "create_issuance",
-    transactionParameters: [self.tokenNameType, self.name, self.description, self.divisible, self.quantity, self.meltable(), self.backing(), self.backing_asset()],
+    transactionParameters: [self.tokenNameType, self.name, self.description, self.divisible, self.quantity, self.meltable, self.backing, self.backing_asset],
     validTransactionCheck: function() {
       return self.validationModel.isValid();
     },
