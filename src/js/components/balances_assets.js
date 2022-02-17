@@ -10,6 +10,18 @@ var BackingAssetInDropdownItemModel = function(asset, assetDisp, rawBalance, nor
   this.SELECT_LABEL = assetDisp + " (" + i18n.t('bal') + ": " + normalizedBalance + ")";
 };
 
+function GetAddrObj(addr) {
+  var walletAddresses = WALLET.addresses();
+  var i = 0;
+  while(i < (walletAddresses.length - 1)) {
+    if(walletAddresses[i] == addr){
+      return walletAddresses[i];
+    }
+    i++
+  }
+  return null;
+}
+
 function createCreateAssetKnockoutValidators() {
   ko.validation.rules['assetNameIsTaken'] = {
     async: true,
@@ -461,7 +473,8 @@ function CreateAssetModalViewModel() {
     if (resetForm) self.resetForm();
     self.xcpBalance(xcpBalance);
     self.address(address);
-    self.addressVM(address);
+    //self.addressVM(address);
+    self.addressVM(GetAddrObj(address));
     self.tokenNameType('numeric');
     self.generateRandomId();
     $('#createAssetFeeOption').select2("val", self.feeOption()); //hack
@@ -470,8 +483,8 @@ function CreateAssetModalViewModel() {
   }
 
   //Get the balance of ALL assets at this address
-  $.jqlog.debug('Updating normalized balances for a single address at balance_assets ' + self.address())
-  failoverAPI("get_normalized_balances", {'addresses': [self.address()]}, function(data, endpoint) {
+  $.jqlog.debug('Updating normalized balances for a single address at balance_assets ' + address.ADDRESS)
+  failoverAPI("get_normalized_balances", {'addresses': [address.ADDRESS]}, function(data, endpoint) {
     for (var i = 0; i < data.length; i++) {
       if (data[i]['quantity'] !== null && data[i]['quantity'] !== 0)
         self.availableBackingAssets.push(new BackingAssetInDropdownItemModel(data[i]['asset'], data[i]['asset_longname'] || data[i]['asset'], data[i]['quantity'], data[i]['normalized_quantity']));
