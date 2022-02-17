@@ -809,7 +809,7 @@
             </div>
           </div></section> -->
 
-          <section><div class="row">
+          <section><div class="row" data-bind="fadeVisibleInOnly: meltable()">
             <label class="control-label col col-sm-3" data-bind="locale: 'backing_asset'"></label>
             <div class="col col-sm-9">
                 <label class="input">
@@ -819,7 +819,7 @@
             </div>
           </div></section>
 
-          <section><div class="row">
+          <section><div class="row" data-bind="fadeVisibleInOnly: meltable()">
             <label class="control-label col col-sm-3" data-bind="locale: 'backing_per_unit'"></label>
             <div class="col col-sm-9">
                 <label class="input"><i class="icon-append fa fa-plus"></i>
@@ -861,6 +861,18 @@
           </section>
 
         </fieldset></form>
+        <div class="formPaddedBot" data-bind="fadeVisibleInOnly: quantityPerUnitBA() && selectedBackingAsset() && totalPay() && meltable()">
+            <p>
+              <span data-bind="locale: 'this_distribution_payment'"></span>
+              <b class="sellColor"><span data-bind="text: dispTotalPay"></span> <span data-bind="text: dispSelectedBackingAsset"></span></b>.
+            </p>
+            <p>
+              <span data-bind="locale: 'after_creation_payment'"></span>
+              <b data-bind="css: {errorColor: backingAssetBalRemainingPostPay() < 0, sellColor: backingAssetBalRemainingPostPay() >= 0}">
+                <span data-bind="text: dispDividendAssetBalRemainingPostPay"></span> <span data-bind="text: dispSelectedBackingAsset"></span>
+              </b>.
+            </p>
+        </div>
         <p class="formPadded" style="text-align:center" data-bind="visible: tokenNameType== 'alphabetic', locale: 'asset_creation_fee_xcp', localeArgs: ASSET_CREATION_FEE_XCP"></p>
       </div>
       <div class="modal-footer">
@@ -914,20 +926,6 @@
 
         </fieldset></form>
       </div>
-
-      <div class="formPaddedBot" data-bind="fadeVisibleInOnly: quantityPerUnitBA() && selectedBackingAsset() && totalPay()">
-          <p>
-            <span data-bind="locale: 'this_distribution_payment'"></span>
-            <b class="sellColor"><span data-bind="text: dispTotalPay"></span> <span data-bind="text: dispSelectedBackingAsset"></span></b>.
-          </p>
-          <p>
-            <span data-bind="locale: 'after_creation_payment'"></span>
-            <b data-bind="css: {errorColor: backingAssetBalRemainingPostPay() < 0, sellColor: backingAssetBalRemainingPostPay() >= 0}">
-              <span data-bind="text: dispDividendAssetBalRemainingPostPay"></span> <span data-bind="text: dispSelectedBackingAsset"></span>
-            </b>.
-          </p>
-      </div>
-
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-bind="click: hide, locale: 'cancel'"></button>
         <button type="button" data-bind="enable: transactionIsReady, click: submitForm, locale: 'issue_additional'" class="btn btn-warning"></button>
