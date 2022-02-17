@@ -467,16 +467,17 @@ function CreateAssetModalViewModel() {
     $('#createAssetFeeOption').select2("val", self.feeOption()); //hack
     self.shown(true);
     trackDialogShow('CreateAsset');
-  }
 
-  //Get the balance of ALL assets at this address
-  $.jqlog.debug('Updating normalized balances for a single address at balance_assets ' + address.ADDRESS)
-  failoverAPI("get_normalized_balances", {'addresses': [address.ADDRESS]}, function(data, endpoint) {
-    for (var i = 0; i < data.length; i++) {
-      if (data[i]['quantity'] !== null && data[i]['quantity'] !== 0)
-        self.availableBackingAssets.push(new BackingAssetInDropdownItemModel(data[i]['asset'], data[i]['asset_longname'] || data[i]['asset'], data[i]['quantity'], data[i]['normalized_quantity']));
-    }
-    });
+    //Get the balance of ALL assets at this address
+    $.jqlog.debug('Updating normalized balances for a single address at balance_assets ' + addressvm.ADDRESS)
+    failoverAPI("get_normalized_balances", {'addresses': [addressvm.ADDRESS]}, function(data, endpoint) {
+      for (var i = 0; i < data.length; i++) {
+        if (data[i]['quantity'] !== null && data[i]['quantity'] !== 0)
+          self.availableBackingAssets.push(new BackingAssetInDropdownItemModel(data[i]['asset'], data[i]['asset_longname'] || data[i]['asset'], data[i]['quantity'], data[i]['normalized_quantity']));
+      }
+      });
+
+  }
 
   self.hide = function() {
     self.shown(false);
