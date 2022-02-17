@@ -189,13 +189,16 @@ function AddressViewModel(type, key, address, initialLabel, pubKeys) {
         asset: asset,
         asset_longname: assetInfo['asset_longname'],
         divisible: assetInfo['divisible'],
+        meltable: assetInfo['meltable'],
         owner: assetInfo['owner'] || assetInfo['issuer'],
         locked: assetInfo['locked'],
         rawBalance: initialRawBalance,
         rawSupply: assetInfo['supply'] || assetInfo['quantity'],
         description: assetInfo['description'],
         rawEscrowedBalance: escrowedBalance,
-        escrowedBalance: normalizeQuantity(escrowedBalance, assetInfo['divisible'])
+        escrowedBalance: normalizeQuantity(escrowedBalance, assetInfo['divisible']),
+        backing: assetInfo['backing'],
+        backing_asset: assetInfo['backing_asset']
       };
       self.assets.push(new AssetViewModel(assetProps)); //add new
       self.initDropDown(asset);

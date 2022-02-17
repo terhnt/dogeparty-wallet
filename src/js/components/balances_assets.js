@@ -67,27 +67,8 @@ function CreateAssetModalViewModel() {
   self.description = ko.observable('').extend({
     required: false
   });
-  self.divisible = ko.observable(false);
+  self.divisible = ko.observable(true);
   self.meltable = ko.observable(false);
-  self.meltable.subscribe(function(val) {
-    if(val){
-      self.validationModel = ko.validatedObservable({
-        name: self.name,
-        description: self.description,
-        quantity: self.quantity,
-        quantityPerUnitBA: self.quantityPerUnitBA,
-        selectedBackingAsset: self.selectedBackingAsset,
-        customFee: self.customFee
-      });
-    }else{
-      self.validationModel = ko.validatedObservable({
-        name: self.name,
-        description: self.description,
-        quantity: self.quantity,
-        customFee: self.customFee
-      });
-    }
-  });
   self.backing = ko.observable(0).extend({
     required: false,
     isValidPositiveQuantityOrZero: self
@@ -290,6 +271,24 @@ function CreateAssetModalViewModel() {
 
     return ownedAssets;
   }, self);
+
+  self.validationModel = ko.validatedObservable({
+    name: self.name,
+    description: self.description,
+    quantity: self.quantity,
+    customFee: self.customFee
+  });
+
+  if(self.meltable()){
+    self.validationModel = ko.validatedObservable({
+      name: self.name,
+      description: self.description,
+      quantity: self.quantity,
+      quantityPerUnitBA: self.quantityPerUnitBA,
+      selectedBackingAsset: self.selectedBackingAsset,
+      customFee: self.customFee
+    });
+  }
 
   self.validationModel = ko.validatedObservable({
     name: self.name,
