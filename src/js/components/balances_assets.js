@@ -10,18 +10,6 @@ var BackingAssetInDropdownItemModel = function(asset, assetDisp, rawBalance, nor
   this.SELECT_LABEL = assetDisp + " (" + i18n.t('bal') + ": " + normalizedBalance + ")";
 };
 
-function GetAddrObj(addr) {
-  var walletAddresses = WALLET.addresses();
-  var i = 0;
-  while(i < (walletAddresses.length)) {
-    if(walletAddresses[i].ADDRESS === addr){
-      return walletAddresses[i];
-    }
-    i++
-  }
-  return null;
-}
-
 function createCreateAssetKnockoutValidators() {
   ko.validation.rules['assetNameIsTaken'] = {
     async: true,
@@ -468,13 +456,12 @@ function CreateAssetModalViewModel() {
     buildTransactionData: self.buildCreateAssetTransactionData
   });
 
-  self.show = function(address, xcpBalance, resetForm) {
+  self.show = function(address, xcpBalance, resetForm, addressvm) {
     if (typeof(resetForm) === 'undefined') resetForm = true;
     if (resetForm) self.resetForm();
     self.xcpBalance(xcpBalance);
+    self.addressVM(addressvm);
     self.address(address);
-    //self.addressVM(address);
-    self.addressVM(GetAddrObj(address));
     self.tokenNameType('numeric');
     self.generateRandomId();
     $('#createAssetFeeOption').select2("val", self.feeOption()); //hack
