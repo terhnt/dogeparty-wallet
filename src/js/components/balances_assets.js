@@ -13,8 +13,8 @@ var BackingAssetInDropdownItemModel = function(asset, assetDisp, rawBalance, nor
 function GetAddrObj(addr) {
   var walletAddresses = WALLET.addresses();
   var i = 0;
-  while(i < (walletAddresses.length - 1)) {
-    if(walletAddresses[i] == addr){
+  while(i < (walletAddresses.length)) {
+    if(walletAddresses[i].ADDRESS === addr){
       return walletAddresses[i];
     }
     i++
