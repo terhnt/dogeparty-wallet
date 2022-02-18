@@ -1138,9 +1138,10 @@ function ShowAssetInfoModalViewModel() {
 
 
     // Check if official
-    self.isOfficial(isOfficialProject(assetObj.ASSET));
+    var ofp = isOfficialProject(assetObj.ASSET);
+    self.isOfficial(ofp);
     // Load Official Project Info:
-    if(self.isOfficial()){
+    if(ofp){
       self.offProject(getOfficialProject(assetObj.ASSET));
     }
     // Load Image URL:
