@@ -1108,6 +1108,10 @@ function ShowAssetInfoModalViewModel() {
   self.divisible = ko.observable(null);
   self.history = ko.observableArray([]);
 
+  self.offProject = ko.observable(null);
+  self.isOfficial = ko.observable(null);
+  self.imageAsset = ko.observable(null);
+
   self.extImageURL = ko.observable(null);
   self.extWebsite = ko.observable(null);
   self.extDescription = ko.observable(null);
@@ -1131,6 +1135,16 @@ function ShowAssetInfoModalViewModel() {
     self.locked(assetObj.locked());
     self.divisible(assetObj.DIVISIBLE);
     self.history([]); //clear until we have the data from the API call below...
+
+
+    // Check if official
+    self.isOfficial(isOfficialProject(assetObj.ASSET));
+    // Load Official Project Info:
+    if(self.isOfficial()){
+      self.offProject(getOfficialProject(assetObj.ASSET));
+    }
+    // Load Image URL:
+    self.imageAsset(getAssetImageURL(assetObj.ASSET));
 
     //Fetch the asset history and populate the table with it
     failoverAPI("get_asset_extended_info", {'asset': assetObj.ASSET},

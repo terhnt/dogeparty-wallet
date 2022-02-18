@@ -227,3 +227,135 @@ function getAddressLabel(address) {
   //gets the address label if the address is in this wallet
   return PREFERENCES['address_aliases'][hashToB64(address)] || address;
 }
+
+// Testing - Official project image load functions
+function getAssetImageURL(asset) {
+  // This will return the url of an image following these checks;
+  // - is asset part of an official project
+  //    - if so; Load from official projects feed .json
+  // - is description an imgur URL
+  //    - if so; Load image from that URL.
+  // - finaly check if asset has a .json link in description
+  //    - if so; Load image from that json.
+  var type = '';
+  var imageurl = '';
+  var officialprojectsjson = ''; // The .json we search for official projects.
+  var assetdescription = '';
+  // todo: Load asset description
+  // Check if asset belongs to an official project
+  var official = isOfficialProject(asset);
+  if(official) {
+    var projectJSON = getOfficialProjectUrlJSON(getOfficialProject(asset));
+    var i = 0;
+    // Load data from projects json
+    data = JSON.parse(getValue(projectJSON));
+    obj = data;
+    imageurl = obj[asset.toUpperCase()].img_url;
+  }else if(assetdescription.toLowerCase().includes("imgur.com/")) {
+    // Load data from assets description
+    imageurl = assetdescription;
+  }else if(assetdescription.toLowerCase().slice(-5) === '.json'){
+    // Load data json from description
+    imageurl = assetdescription;
+  }else{
+    // No Image
+    imageurl = 'https://www.freeiconspng.com/uploads/no-image-icon-4.png';
+  }
+  return imageurl;
+}
+
+function getValue(xurl){
+   var value= $.ajax({
+      url: xurl,
+      async: false
+   }).responseText;
+   return value;
+}
+
+// Check if asset belongs to official project
+function isOfficialProject(asset) {
+  // get project urls
+  var jsonurls = '';
+  var isOfficial = false;
+  var obj;
+  data = JSON.parse(getValue('https://terhnt.github.io/unoprojectfeed.json'));
+  obj = data;
+  jsonurls = obj.Projects.Url;
+
+  // Work through all the urls and check for asset name
+  var i = 0; // Project #
+  while(i < jsonurls.length) {
+    var x = 0; // Asset #
+    pdata = JSON.parse(getValue(obj.Projects.Url[i].toString()));
+      const projobj = pdata;
+      var len = Object.keys(projobj).length;
+      while(x < len){
+        if(asset.toUpperCase() === Object.keys(projobj)[x].toUpperCase()){
+          return true;
+        }
+        x++;
+      }
+    i++;
+  }
+  return false;
+}
+
+// Check if projectname is official
+function isOfficialProjectName(projectname) {
+    data = JSON.parse(getValue('https://terhnt.github.io/unoprojectfeed.json'));
+    const obj = data;
+    var pros = obj.Projects.Names;
+    var i = 0;
+
+    while(i < pros.length){
+      if(projectname.toUpperCase() === pros[i].toUpperCase()){
+        return true;
+      }
+      i++;
+    }
+  return false;
+}
+
+// Return official project name for asset
+function getOfficialProject(asset) {
+  // get project urls
+  var res = false;
+  var jsonurls = '';
+  var isOfficial = false;
+  var obj = {};
+  data = JSON.parse(getValue('https://terhnt.github.io/unoprojectfeed.json'));
+  obj = data;
+  jsonurls = data.Projects.Url;
+  // Work through all the urls and check for asset name
+  var i = 0; // Project #
+  while(i < jsonurls.length) {
+    var x = 0; // Asset #
+    pdata = JSON.parse(getValue(obj.Projects.Url[i].toString()));
+    var projobj = pdata;
+    var len = Object.keys(projobj).length;
+    while(x < len){
+      if(asset.toUpperCase() === Object.keys(projobj)[x].toUpperCase()){
+        res = obj.Projects.Names[i];
+      }
+      x++;
+    }
+  i++;
+  }
+ return res;
+}
+
+function getOfficialProjectUrlJSON(projectname) {
+  var res = null;
+    data = JSON.parse(getValue('https://terhnt.github.io/unoprojectfeed.json'));
+    const obj = data;
+    var pros = obj.Projects.Names;
+    var i = 0;
+
+    while(i < pros.length){
+      if(projectname.toUpperCase() === pros[i].toUpperCase()){
+        res = obj.Projects.Url[i];
+      }
+      i++;
+    }
+return res;
+}
