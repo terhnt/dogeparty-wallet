@@ -1138,14 +1138,11 @@ function ShowAssetInfoModalViewModel() {
 
 
     // Check if official
-    var ofp = isOfficialProject(assetObj.ASSET);
-    self.isOfficial(ofp);
+    self.isOfficial(isOfficialProject(assetObj.ASSET));
     // Load Official Project Info:
-    if(ofp){
-      self.offProject(getOfficialProject(assetObj.ASSET));
-    }
+    self.offProject(getOfficialProject(assetObj.ASSET));
     // Load Image URL:
-    self.imageAsset(getAssetImageURL(assetObj.ASSET));
+    //self.imageAsset(getAssetImageURL(assetObj.ASSET));
 
     //Fetch the asset history and populate the table with it
     failoverAPI("get_asset_extended_info", {'asset': assetObj.ASSET},

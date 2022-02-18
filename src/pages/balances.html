@@ -1136,6 +1136,16 @@
       </div>
       <div class="modal-body no-padding">
         <form class="smart-form"><fieldset>
+
+          <!-- official_project -->
+          <section data-bind="visible: isOfficial"><div class="row">
+            <label class="control-label col col-sm-2" data-bind="locale: 'offp'"></label>
+            <div class="col col-sm-10">
+                <p><b data-bind="css: {sellColor: true}, locale: 'official_project', localArgs: offProject"><span></span></b></p>
+            </div>
+          </div></section>
+
+          <!-- Orig Code -->
           <section><div class="row">
             <label class="control-label col col-sm-2" data-bind="locale: 'owned_by'"></label>
             <div class="col col-sm-10">
@@ -1171,21 +1181,6 @@
           </div></section>
 
           <!-- TODO: Add info on Backing, if asset is meltable -->
-
-          <!-- official_project -->
-          <section data-bind="visible: isOfficial"><div class="row">
-            <label class="control-label col col-sm-2" data-bind="locale: 'offp'"></label>
-            <div class="col col-sm-10">
-                <p><b data-bind="css: {sellColor: true}, locale: 'official_project', localArgs: offProject"><span></span></b></p>
-            </div>
-          </div></section>
-
-          <section data-bind="visible: true"><div class="row">
-            <label class="control-label col col-sm-2" data-bind="locale: 'logo'"></label>
-            <div class="col col-sm-10">
-                <img alt="" data-bind="attr: {'src': imageAsset}" /> <!-- should be 48x48 -->
-            </div>
-          </div></section>
 
           <!-- Extended Info -->
 
