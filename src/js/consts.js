@@ -242,7 +242,7 @@ var USE_TESTNET = (   (((location.pathname == "/" || location.pathname == "/src/
   || location.hostname.indexOf('testnet') != -1) ? true : false
 );
 
-var BLOCKEXPLORER_URL = USE_TESTNET ? "https://testnet-unoparty.xchain.io" : "https://unoparty.xchain.io";
+var BLOCKEXPLORER_URL = USE_TESTNET ? "https://unoparty-testnet.xchain.io" : "https://unoparty.xchain.io";
 var GOOGLE_ANALYTICS_UAID = null; //will be set in unowallet.js
 var ROLLBAR_ACCESS_TOKEN = null; //will be set in unowallet.js
 

@@ -299,7 +299,7 @@ $(document).ready(function() {
       firefox20: true,
       firefox21: true,
       firefox22: true,
-      chrome1: true,
+      //chrome1: true,
       chrome2: true,
       chrome3: true,
       chrome4: true,
@@ -367,7 +367,7 @@ $(document).ready(function() {
     },
     header: i18n.t('brower_not_supported_header'),
     paragraph1: i18n.t("brower_not_supported_text"),
-    close: false,
+    close: true, // Make this popup less inconvenient if incorrectly shown. Allows it to be closed by the user.
     closeESC: false
   });
 
